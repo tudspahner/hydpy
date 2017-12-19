@@ -1,0 +1,1210 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>devicetools &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dummytools" href="dummytools.html" />
+    <link rel="prev" title="connectiontools" href="connectiontools.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dummytools.html" title="dummytools"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="connectiontools.html" title="connectiontools"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="core.html" accesskey="U">Core Modules</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="devicetools">
+<span id="id1"></span><h1>devicetools<a class="headerlink" href="#devicetools" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-hydpy.core.devicetools"></span><p>This modules implements features related to two types of <cite>devices</cite>,
+called <cite>nodes</cite> and <cite>elements</cite> which are the most fundamental means to
+structure HydPy projects.</p>
+<p>Module <a class="reference internal" href="#module-hydpy.core.devicetools" title="hydpy.core.devicetools"><code class="xref py py-mod docutils literal"><span class="pre">devicetools</span></code></a> implements the following members:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#hydpy.core.devicetools.Keywords" title="hydpy.core.devicetools.Keywords"><code class="xref py py-class docutils literal"><span class="pre">Keywords</span></code></a> Set of keyword arguments used to describe and search for element and node objects.</li>
+<li><a class="reference internal" href="#hydpy.core.devicetools.Device" title="hydpy.core.devicetools.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> Base class for class <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> and class <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a>.</li>
+<li><a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> Handles the data flow between <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> objects.</li>
+<li><a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> Handles a <a class="reference internal" href="modeltools.html#hydpy.core.modeltools.Model" title="hydpy.core.modeltools.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> and connects it to other models via <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> objects.</li>
+<li><a class="reference internal" href="#hydpy.core.devicetools.Devices" title="hydpy.core.devicetools.Devices"><code class="xref py py-class docutils literal"><span class="pre">Devices</span></code></a> Base class for class <a class="reference internal" href="#hydpy.core.devicetools.Elements" title="hydpy.core.devicetools.Elements"><code class="xref py py-class docutils literal"><span class="pre">Elements</span></code></a> and class <a class="reference internal" href="#hydpy.core.devicetools.Nodes" title="hydpy.core.devicetools.Nodes"><code class="xref py py-class docutils literal"><span class="pre">Nodes</span></code></a>.</li>
+<li><a class="reference internal" href="#hydpy.core.devicetools.Nodes" title="hydpy.core.devicetools.Nodes"><code class="xref py py-class docutils literal"><span class="pre">Nodes</span></code></a> A container for handling <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> objects.</li>
+<li><a class="reference internal" href="#hydpy.core.devicetools.Elements" title="hydpy.core.devicetools.Elements"><code class="xref py py-class docutils literal"><span class="pre">Elements</span></code></a> A container for handling <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> objects.</li>
+</ul>
+</div></blockquote>
+<hr class="docutils" />
+<dl class="class">
+<dt id="hydpy.core.devicetools.Keywords">
+<em class="property">class </em><code class="descclassname">hydpy.core.devicetools.</code><code class="descname">Keywords</code><span class="sig-paren">(</span><em>names=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/stdtypes.html#set" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">set</span></code></a></p>
+<p>Set of keyword arguments used to describe and search for element and
+node objects.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.devicetools</span> <span class="k">import</span> <span class="n">Keywords</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dummies</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="n">Keywords</span><span class="p">([</span><span class="s1">&#39;first_keyword&#39;</span><span class="p">,</span> <span class="s1">&#39;second_keyword&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="s1">&#39;keyword_3&#39;</span><span class="p">,</span> <span class="s1">&#39;keyword_4&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="s1">&#39;keyboard&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dummies</span><span class="o">.</span><span class="n">keywords</span>
+<span class="go">Keywords([&quot;first_keyword&quot;, &quot;keyboard&quot;, &quot;keyword_3&quot;, &quot;keyword_4&quot;,</span>
+<span class="go">          &quot;second_keyword&quot;])</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="hydpy.core.devicetools.Keywords.startswith">
+<code class="descname">startswith</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Keywords.startswith"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Keywords.startswith" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all keywords starting with the given string.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dummies</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;keyword&#39;</span><span class="p">)</span>
+<span class="go">[&#39;keyword_3&#39;, &#39;keyword_4&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Keywords.endswith">
+<code class="descname">endswith</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Keywords.endswith"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Keywords.endswith" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all keywords ending with the given string.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dummies</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;keyword&#39;</span><span class="p">)</span>
+<span class="go">[&#39;first_keyword&#39;, &#39;second_keyword&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Keywords.contains">
+<code class="descname">contains</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Keywords.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Keywords.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all keywords containing the given string.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dummies</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;keyword&#39;</span><span class="p">)</span>
+<span class="go">[&#39;first_keyword&#39;, &#39;keyword_3&#39;, &#39;keyword_4&#39;, &#39;second_keyword&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Keywords.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Keywords.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Keywords.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Before updating, names are checked to be valid variable identifiers.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">keywords</span> <span class="o">=</span> <span class="n">dummies</span><span class="o">.</span><span class="n">keywords</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">keywords</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="s1">&#39;test_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test 2&#39;</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">While trying to add the keyword `test 2` to device `?`, the following error occured: The given name string `test 2` does not define a valid variable identifier.  ...</span>
+</pre></div>
+</div>
+<p>Note that the first string (<cite>test_1</cite>) is not added, as the second
+one (<cite>test 2</cite>) is invalid:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">keywords</span>
+<span class="go">Keywords([&quot;first_keyword&quot;, &quot;keyboard&quot;, &quot;keyword_3&quot;, &quot;keyword_4&quot;,</span>
+<span class="go">          &quot;second_keyword&quot;])</span>
+</pre></div>
+</div>
+<p>If the seconds string is corrected, everything works fine:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">keywords</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="s1">&#39;test_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">keywords</span>
+<span class="go">Keywords([&quot;first_keyword&quot;, &quot;keyboard&quot;, &quot;keyword_3&quot;, &quot;keyword_4&quot;,</span>
+<span class="go">          &quot;second_keyword&quot;, &quot;test_1&quot;, &quot;test_2&quot;])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Keywords.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Keywords.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Keywords.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Before adding a new name, it is checked to be valid variable identifiers.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">keywords</span> <span class="o">=</span> <span class="n">dummies</span><span class="o">.</span><span class="n">keywords</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">keywords</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;1_test&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">While trying to add the keyword `1_test` to device `?`, the following error occured: The given name string `1_test` does not define a valid variable identifier.  ...</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">keywords</span>
+<span class="go">Keywords([&quot;first_keyword&quot;, &quot;keyboard&quot;, &quot;keyword_3&quot;, &quot;keyword_4&quot;,</span>
+<span class="go">          &quot;second_keyword&quot;])</span>
+</pre></div>
+</div>
+<p>If the string is corrected, everything works fine:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">keywords</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;one_test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">keywords</span>
+<span class="go">Keywords([&quot;first_keyword&quot;, &quot;keyboard&quot;, &quot;keyword_3&quot;, &quot;keyword_4&quot;,</span>
+<span class="go">          &quot;one_test&quot;, &quot;second_keyword&quot;])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.devicetools.Device">
+<em class="property">class </em><code class="descclassname">hydpy.core.devicetools.</code><code class="descname">Device</code><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Base class for class <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> and class <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a>.</p>
+<p>For framework programmers it is important to know, that all created
+devices are registered.  Besides some other simplifications for
+framework users, this prevents from defining multiple devices with
+the same name (which is not allowed, at the names are supposed to
+be valid object identifiers).</p>
+<p>To show how the registry works, we first start with a clear registry:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="o">.</span><span class="n">clear_registry</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">Node</span><span class="o">.</span><span class="n">registered_names</span><span class="p">())</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+<p>Now we initialize two nodes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node2</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each time we pass the same names to the constructor of class <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a>,
+the same object is returned:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span> <span class="ow">is</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n1&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span> <span class="ow">is</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n2&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>You can access all registed nodes via the following class method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="o">.</span><span class="n">registered_nodes</span><span class="p">()</span>
+<span class="go">Nodes(&quot;n1&quot;, &quot;n2&quot;)</span>
+</pre></div>
+</div>
+<p>The respective names are directly available via:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">Node</span><span class="o">.</span><span class="n">registered_names</span><span class="p">())</span>
+<span class="go">[&#39;n1&#39;, &#39;n2&#39;]</span>
+</pre></div>
+</div>
+<p>It is not recommended under usual circumstances, but you are allowed
+to clear the registry:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="o">.</span><span class="n">clear_registry</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="o">.</span><span class="n">registered_nodes</span><span class="p">()</span>
+<span class="go">Nodes()</span>
+</pre></div>
+</div>
+<p>But now there is the danger of creating two differnt nodes with the
+same name, which is very likely to result in strange bugs:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_node1</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_node1</span> <span class="ow">is</span> <span class="n">node1</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_node1</span> <span class="o">==</span> <span class="n">node1</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>The examples above also work for class <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a>, except that
+method <cite>registered_nodes</cite> must be exchanged with method
+<cite>registered_elements</cite>, of course:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Element</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="o">.</span><span class="n">clear_registry</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;e1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">registered_elements</span><span class="p">()</span>
+<span class="go">Elements(&quot;e1&quot;)</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="hydpy.core.devicetools.Device.name">
+<code class="descname">name</code><a class="headerlink" href="#hydpy.core.devicetools.Device.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the actual device (node or element).</p>
+<p>Names are the identifiers of <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> and <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a>
+objects.  So define them carefully:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n1&#39;</span><span class="p">),</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span> <span class="ow">is</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n1&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span> <span class="ow">is</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n2&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Note that each name name must be a valid variable identifier (see
+function <a class="reference internal" href="objecttools.html#hydpy.core.objecttools.valid_variable_identifier" title="hydpy.core.objecttools.valid_variable_identifier"><code class="xref py py-func docutils literal"><span class="pre">valid_variable_identifier()</span></code></a>),
+to allow for attribute access:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Nodes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="n">Nodes</span><span class="p">(</span><span class="n">node1</span><span class="p">,</span> <span class="s1">&#39;n2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span><span class="o">.</span><span class="n">n1</span>
+<span class="go">Node(&quot;n1&quot;, variable=&quot;Q&quot;)</span>
+</pre></div>
+</div>
+<p>Invalid variable identifiers result errors like the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node3</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n 3&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">While trying to initialize a `Node` object with value `n 3` of type `str`, the following error occured: The given name string `n 3` does not define a valid variable identifier.  ...</span>
+</pre></div>
+</div>
+<p>When you change the name of a <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> and <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a>
+object (only do this for a good reason), the corresponding key of
+all related <a class="reference internal" href="#hydpy.core.devicetools.Nodes" title="hydpy.core.devicetools.Nodes"><code class="xref py py-class docutils literal"><span class="pre">Nodes</span></code></a> and <a class="reference internal" href="#hydpy.core.devicetools.Elements" title="hydpy.core.devicetools.Elements"><code class="xref py py-class docutils literal"><span class="pre">Elements</span></code></a> objects (as well
+as of the internal registry) changes automatically:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;n1a&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span>
+<span class="go">Nodes(&quot;n1a&quot;, &quot;n2&quot;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.core.devicetools.Device.keywords">
+<code class="descname">keywords</code><a class="headerlink" href="#hydpy.core.devicetools.Device.keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keywords describing this device.</p>
+<p>The keywords are contained within a <a class="reference internal" href="#hydpy.core.devicetools.Keywords" title="hydpy.core.devicetools.Keywords"><code class="xref py py-class docutils literal"><span class="pre">Keywords</span></code></a> object:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span><span class="o">.</span><span class="n">keywords</span>
+<span class="go">Keywords([])</span>
+</pre></div>
+</div>
+<p>You are allowed to add then individually…</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="s1">&#39;word1&#39;</span>
+</pre></div>
+</div>
+<p>… or within iterables:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;word2&#39;</span><span class="p">,</span> <span class="s1">&#39;word3&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span><span class="o">.</span><span class="n">keywords</span>
+<span class="go">Keywords([&quot;word1&quot;, &quot;word2&quot;, &quot;word3&quot;])</span>
+</pre></div>
+</div>
+<p>You can delete all keywords at once via:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">node</span><span class="o">.</span><span class="n">keywords</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span><span class="o">.</span><span class="n">keywords</span>
+<span class="go">Keywords([])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="hydpy.core.devicetools.Device.clear_registry">
+<em class="property">classmethod </em><code class="descname">clear_registry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Device.clear_registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Device.clear_registry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the registry from all initialized devices.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="hydpy.core.devicetools.Device.registered_names">
+<em class="property">classmethod </em><code class="descname">registered_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Device.registered_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Device.registered_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all names of <a class="reference internal" href="#hydpy.core.devicetools.Device" title="hydpy.core.devicetools.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> objects initialized so far.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Device.add_handler">
+<code class="descname">add_handler</code><span class="sig-paren">(</span><em>handler</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Device.add_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Device.add_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the given handler (either an <a class="reference internal" href="#hydpy.core.devicetools.Elements" title="hydpy.core.devicetools.Elements"><code class="xref py py-class docutils literal"><span class="pre">Elements</span></code></a> or
+:class`Nodes` object) to the set of handlers stored internally.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Device.remove_handler">
+<code class="descname">remove_handler</code><span class="sig-paren">(</span><em>handler</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Device.remove_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Device.remove_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the given handler (either an <a class="reference internal" href="#hydpy.core.devicetools.Elements" title="hydpy.core.devicetools.Elements"><code class="xref py py-class docutils literal"><span class="pre">Elements</span></code></a> or
+:class`Nodes` object) from the set of handlers stored internally.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.devicetools.Node">
+<em class="property">class </em><code class="descclassname">hydpy.core.devicetools.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>name</em>, <em>variable=None</em>, <em>keywords=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hydpy.core.devicetools.Device" title="hydpy.core.devicetools.Device"><code class="xref py py-class docutils literal"><span class="pre">hydpy.core.devicetools.Device</span></code></a></p>
+<p>Handles the data flow between <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> objects.</p>
+<p>When initializing <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> objects, values for the optional <cite>variable</cite>
+and <cite>keywords</cite> can be passed, which default to <cite>Q</cite> and “empty:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span><span class="o">.</span><span class="n">variable</span>
+<span class="go">&#39;Q&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span><span class="o">.</span><span class="n">keywords</span>
+<span class="go">Keywords([])</span>
+</pre></div>
+</div>
+<p>You are allowed to add further keywords by successive constructor calls:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="s1">&#39;word1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;word2&#39;</span><span class="p">,</span> <span class="s1">&#39;word3&#39;</span><span class="p">))</span>
+<span class="go">Node(&quot;test&quot;, variable=&quot;Q&quot;,</span>
+<span class="go">     keywords=[&quot;word1&quot;, &quot;word2&quot;, &quot;word3&quot;])</span>
+</pre></div>
+</div>
+<p>But you are not allowed to change the variable a node is supposed to
+handle (would be to error-prone):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;W&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">The variable to be represented by a `Node instance cannot be changed.  The variable of node `test` is `Q` instead of `W` or `None`.  Keep in mind, that `name` is the unique identifier of node objects.</span>
+</pre></div>
+</div>
+<p>If you really want to change a variable without to restart your Python
+process, you have to delete the node from the registry first (again,
+very error-prone unless you are absolutely sure you can delete all
+other relevant references to the node object):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">node</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;W&#39;</span><span class="p">)</span>
+<span class="go">Node(&quot;test&quot;, variable=&quot;W&quot;)</span>
+</pre></div>
+</div>
+<p>To fully understand the last example, read the technical remarks
+regarding the registry of <a class="reference internal" href="#hydpy.core.devicetools.Device" title="hydpy.core.devicetools.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> objects explained above.
+On top of this persistent registry, there is also a temporal one,
+which helps to identify when certain nodes where created
+(e.g. during the execution of a certain network file).</p>
+<p>To show how this works, we again start with a clear registry:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="o">.</span><span class="n">clear_registry</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Firstly, create two nodes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node2</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now “gather” these two nodes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="o">.</span><span class="n">gather_new_nodes</span><span class="p">()</span>
+<span class="go">Nodes(&quot;n1&quot;, &quot;n2&quot;)</span>
+</pre></div>
+</div>
+<p>This automatically removes the gathered nodes from the temporal registry.
+This can be shown by simply calling the method again:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="o">.</span><span class="n">gather_new_nodes</span><span class="p">()</span>
+<span class="go">Nodes()</span>
+</pre></div>
+</div>
+<p>Now create a new node (n3) and call the constructor of an already existing
+node again:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node3</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n3&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;n1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Calling method <cite>gather_new_nodes</cite> again shows that an node is regarded
+as “new”, if its constructor has been called:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="o">.</span><span class="n">gather_new_nodes</span><span class="p">()</span>
+<span class="go">Nodes(&quot;n1&quot;, &quot;n3&quot;)</span>
+</pre></div>
+</div>
+<p>This mechanism allows for redefining the same node in different network
+files while keeping track of all files where it has been defined.</p>
+<p>The following example is just supposed to clarify that the permanent
+registry has not been altered by calling <cite>gather_new_nodes</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="o">.</span><span class="n">registered_nodes</span><span class="p">()</span>
+<span class="go">Nodes(&quot;n1&quot;, &quot;n2&quot;, &quot;n3&quot;)</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="hydpy.core.devicetools.Node.variable">
+<code class="descname">variable</code><a class="headerlink" href="#hydpy.core.devicetools.Node.variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>The variable handled by the respective node instance, e.g. <cite>Q</cite>.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="hydpy.core.devicetools.Node.registered_nodes">
+<em class="property">classmethod </em><code class="descname">registered_nodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node.registered_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node.registered_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> objects initialized so far.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="hydpy.core.devicetools.Node.gather_new_nodes">
+<em class="property">classmethod </em><code class="descname">gather_new_nodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node.gather_new_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node.gather_new_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gather all <cite>new</cite> <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> objects. <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> objects
+are deemed to be new if they have been created after the last usage
+of this method.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.core.devicetools.Node.deploy_mode">
+<code class="descname">deploy_mode</code><a class="headerlink" href="#hydpy.core.devicetools.Node.deploy_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the kind of information a node deploys.</p>
+<p>The following modes are supported:</p>
+<blockquote>
+<div><ul class="simple">
+<li>newsim: Deploy the simulated values calculated just recently.
+This is the default mode, where a node receives e.g. a discharge
+value from a upstream element and passes it to the downstream
+element directly.</li>
+<li>obs: Deploy observed values instead of simulated values.  The
+node still receives the simulated values from its upstream
+element(s).  But it deploys values to its downstream nodes which
+are defined externally.  Usually, these values are observations
+made available within an Sequence file. See module
+<a class="reference internal" href="sequencetools.html#module-hydpy.core.sequencetools" title="hydpy.core.sequencetools"><code class="xref py py-mod docutils literal"><span class="pre">sequencetools</span></code></a> for further information on
+file specifications.</li>
+<li>oldsim: Simular to mode <cite>obs</cite>.  But it is usually applied when
+a node is supposed to deploy simulated values which have been
+calculated in a previous simulation run and stored in a sequence
+file.</li>
+</ul>
+</div></blockquote>
+<p>The technical difference between modes <cite>obs</cite> and <cite>oldsim</cite> is, that
+the external values are either handled by the <cite>obs</cite> or the <cite>sim</cite>
+sequence object.  Hence, if you select the <cite>oldsim</cite> mode, the
+values of the upstream elements calculated within the current
+simulation are not available (e.g. for parameter calibration)
+after the simulation is finished.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Node.get_double_via_exits">
+<code class="descname">get_double_via_exits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node.get_double_via_exits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node.get_double_via_exits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the <code class="xref py py-class docutils literal"><span class="pre">Double</span></code> object that
+is supposed to deploy its value to the downstream elements.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Node.get_double_via_entries">
+<code class="descname">get_double_via_entries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node.get_double_via_entries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node.get_double_via_entries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the <code class="xref py py-class docutils literal"><span class="pre">Double</span></code> object that
+is supposed to receive the value(s) of the upstream elements.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Node.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><em>idx=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the actual value of the simulation sequence to zero.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Node.prepare_allseries">
+<code class="descname">prepare_allseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node.prepare_allseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node.prepare_allseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the series objects of both the <cite>sim</cite> and the <cite>obs</cite> sequence.</p>
+<p>Call this method before a simulation run, if you need access to the
+whole time series of the simulated and the observed series after the
+simulation run is finished.</p>
+<p>By default, the series are stored in RAM, which is the faster
+option.  If your RAM is limited, pass the <cite>False</cite> for function
+argument <cite>ramflag</cite> to store the series on disk.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Node.prepare_simseries">
+<code class="descname">prepare_simseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node.prepare_simseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node.prepare_simseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the series object of the <cite>sim</cite> sequence.</p>
+<p>See method <a class="reference internal" href="#hydpy.core.devicetools.Node.prepare_allseries" title="hydpy.core.devicetools.Node.prepare_allseries"><code class="xref py py-func docutils literal"><span class="pre">Node.prepare_allseries()</span></code></a> for further information.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Node.prepare_obsseries">
+<code class="descname">prepare_obsseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node.prepare_obsseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node.prepare_obsseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the series object of the <cite>obs</cite> sequence.</p>
+<p>See method <a class="reference internal" href="#hydpy.core.devicetools.Node.prepare_allseries" title="hydpy.core.devicetools.Node.prepare_allseries"><code class="xref py py-func docutils literal"><span class="pre">Node.prepare_allseries()</span></code></a> for further information.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Node.comparison_plot">
+<code class="descname">comparison_plot</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node.comparison_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node.comparison_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the series of both the <cite>sim</cite> and (if available) the <cite>obs</cite>
+sequence.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Node.assignrepr">
+<code class="descname">assignrepr</code><span class="sig-paren">(</span><em>prefix=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Node.assignrepr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Node.assignrepr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the <cite>visual appearence</cite> of <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> objects.</p>
+<p>You can pass a string which prefixes the string representation.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.devicetools.Element">
+<em class="property">class </em><code class="descclassname">hydpy.core.devicetools.</code><code class="descname">Element</code><span class="sig-paren">(</span><em>name</em>, <em>inlets=None</em>, <em>outlets=None</em>, <em>receivers=None</em>, <em>senders=None</em>, <em>keywords=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hydpy.core.devicetools.Device" title="hydpy.core.devicetools.Device"><code class="xref py py-class docutils literal"><span class="pre">hydpy.core.devicetools.Device</span></code></a></p>
+<p>Handles a <a class="reference internal" href="modeltools.html#hydpy.core.modeltools.Model" title="hydpy.core.modeltools.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> and connects it to
+other models via <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> objects.</p>
+<p>You are allowed to pass keywords to the constructor of class
+<a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a>, as shown above for class <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a>.</p>
+<p>Additionally, you are allowed to pass different nodes (or names of
+nodes) by successive constructor calls, e.g.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+<span class="go">Element(&quot;test&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">inlets</span><span class="o">=</span><span class="s1">&#39;in1&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">outlets</span><span class="o">=</span><span class="s1">&#39;out1&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">receivers</span><span class="o">=</span><span class="s1">&#39;rec1&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">senders</span><span class="o">=</span><span class="s1">&#39;sen1&#39;</span><span class="p">)</span>
+<span class="go">Element(&quot;test&quot;,</span>
+<span class="go">        inlets=&quot;in1&quot;,</span>
+<span class="go">        outlets=&quot;out1&quot;,</span>
+<span class="go">        receivers=&quot;rec1&quot;,</span>
+<span class="go">        senders=&quot;sen1&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">inlets</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;in2&#39;</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;in3&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>        <span class="n">outlets</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;out2&#39;</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;out3&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>        <span class="n">receivers</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;rec2&#39;</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;rec3&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>        <span class="n">senders</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;sen2&#39;</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;sen3&#39;</span><span class="p">)))</span>
+<span class="go">Element(&quot;test&quot;,</span>
+<span class="go">        inlets=[&quot;in1&quot;, &quot;in2&quot;, &quot;in3&quot;],</span>
+<span class="go">        outlets=[&quot;out1&quot;, &quot;out2&quot;, &quot;out3&quot;],</span>
+<span class="go">        receivers=[&quot;rec1&quot;, &quot;rec2&quot;, &quot;rec3&quot;],</span>
+<span class="go">        senders=[&quot;sen1&quot;, &quot;sen2&quot;, &quot;sen3&quot;])</span>
+</pre></div>
+</div>
+<p>Reassigning some nodes does no harm:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">inlets</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;in2&#39;</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;in3&#39;</span><span class="p">),</span> <span class="s1">&#39;in4&#39;</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="n">outlets</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;out2&#39;</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;out3&#39;</span><span class="p">),</span> <span class="s1">&#39;out4&#39;</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="n">receivers</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;rec2&#39;</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;rec3&#39;</span><span class="p">),</span> <span class="s1">&#39;rec4&#39;</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="n">senders</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;sen2&#39;</span><span class="p">,</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;sen3&#39;</span><span class="p">),</span> <span class="s1">&#39;sen4&#39;</span><span class="p">))</span>
+<span class="go">Element(&quot;test&quot;,</span>
+<span class="go">        inlets=[&quot;in1&quot;, &quot;in2&quot;, &quot;in3&quot;, &quot;in4&quot;],</span>
+<span class="go">        outlets=[&quot;out1&quot;, &quot;out2&quot;, &quot;out3&quot;, &quot;out4&quot;],</span>
+<span class="go">        receivers=[&quot;rec1&quot;, &quot;rec2&quot;, &quot;rec3&quot;, &quot;rec4&quot;],</span>
+<span class="go">        senders=[&quot;sen1&quot;, &quot;sen2&quot;, &quot;sen3&quot;, &quot;sen4&quot;])</span>
+</pre></div>
+</div>
+<p>But it is verified that an element does not handle the same node as
+an <cite>input</cite> and <cite>output</cite> node or as a <cite>receiver</cite> and a <cite>sender</cite> node:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">inlets</span><span class="o">=</span><span class="s1">&#39;out1&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">For element `test`, the given inlet node `out1` is already defined as an outlet node, which is not allowed.</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">outlets</span><span class="o">=</span><span class="s1">&#39;in1&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">For element `test`, the given outlet node `in1` is already defined as an inlet node, which is not allowed.</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">receivers</span><span class="o">=</span><span class="s1">&#39;sen1&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">For element `test`, the given receiver node `sen1` is already defined as a sender node, which is not allowed.</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">senders</span><span class="o">=</span><span class="s1">&#39;rec1&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">For element `test`, the given sender node `rec1` is already defined as a receiver, node which is not allowed.</span>
+</pre></div>
+</div>
+<p>Note the technical remarks regarding the permanent registry of
+<a class="reference internal" href="#hydpy.core.devicetools.Device" title="hydpy.core.devicetools.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> objects explained above (which also help to understand
+how the last examples work behind the scenes.)  Additionally, the
+remarks on the temperal registry of <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> objects also apply
+on <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> objects.  Without to repeat the whole explanation,
+this can be shown by the following short example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Elements</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="o">.</span><span class="n">clear_registry</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Elements</span><span class="p">(</span><span class="s1">&#39;e1&#39;</span><span class="p">,</span> <span class="s1">&#39;e2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">e1</span><span class="o">.</span><span class="n">gather_new_elements</span><span class="p">()</span>
+<span class="go">Elements(&quot;e1&quot;, &quot;e2&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Elements</span><span class="p">(</span><span class="s1">&#39;e3&#39;</span><span class="p">,</span> <span class="s1">&#39;e1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">e1</span><span class="o">.</span><span class="n">gather_new_elements</span><span class="p">()</span>
+<span class="go">Elements(&quot;e1&quot;, &quot;e3&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="o">.</span><span class="n">gather_new_elements</span><span class="p">()</span>
+<span class="go">Elements()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="o">.</span><span class="n">registered_elements</span><span class="p">()</span>
+<span class="go">Elements(&quot;e1&quot;, &quot;e2&quot;, &quot;e3&quot;)</span>
+</pre></div>
+</div>
+<dl class="classmethod">
+<dt id="hydpy.core.devicetools.Element.registered_elements">
+<em class="property">classmethod </em><code class="descname">registered_elements</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.registered_elements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.registered_elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> objects initialized so far.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="hydpy.core.devicetools.Element.gather_new_elements">
+<em class="property">classmethod </em><code class="descname">gather_new_elements</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.gather_new_elements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.gather_new_elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gather all <cite>new</cite> <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> objects. <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> objects
+are deemed to be new if they have been created after the last usage
+of this method.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.core.devicetools.Element.variables">
+<code class="descname">variables</code><a class="headerlink" href="#hydpy.core.devicetools.Element.variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of all different variables of the nodes directly connected
+to this element.</p>
+<p>Suppose there is a element connected to five nodes, which (partly)
+represent different variables:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">inlets</span><span class="o">=</span><span class="p">(</span><span class="n">Node</span><span class="p">(</span><span class="s1">&#39;N1&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">),</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;N2&#39;</span><span class="p">,</span> <span class="s1">&#39;Y1&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>                  <span class="n">outlets</span><span class="o">=</span><span class="p">(</span><span class="n">Node</span><span class="p">(</span><span class="s1">&#39;N3&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">),</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;N4&#39;</span><span class="p">,</span> <span class="s1">&#39;Y2&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>                  <span class="n">receivers</span><span class="o">=</span><span class="p">(</span><span class="n">Node</span><span class="p">(</span><span class="s1">&#39;N5&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">),</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;N6&#39;</span><span class="p">,</span> <span class="s1">&#39;Y3&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>                  <span class="n">senders</span><span class="o">=</span><span class="p">(</span><span class="n">Node</span><span class="p">(</span><span class="s1">&#39;N7&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">),</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;N8&#39;</span><span class="p">,</span> <span class="s1">&#39;Y4&#39;</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p><cite>variables</cite> puts all the different variables of these nodes together:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+<span class="go">[&#39;X&#39;, &#39;Y1&#39;, &#39;Y2&#39;, &#39;Y3&#39;, &#39;Y4&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Element.init_model">
+<code class="descname">init_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.init_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.init_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the model to be handled by this element and build
+the required connections.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Element.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>model=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect the handled model with this element.</p>
+<p>The following examples involve an error that is catched cleanly
+only in pure Python mode, hence Cython is disabled:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">pub</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pub</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">usecython</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>If a model is passed, proper connections with this model are build
+We use the “HBV branch model” <code class="xref py py-mod docutils literal"><span class="pre">hbranch</span> <span class="pre">as</span> <span class="pre">an</span>
+<span class="pre">example,</span> <span class="pre">which</span> <span class="pre">branches</span> <span class="pre">a</span> <span class="pre">single</span> <span class="pre">input</span> <span class="pre">value</span> <span class="pre">(from</span> <span class="pre">to</span> <span class="pre">node</span> <span class="pre">`inp</span></code>)
+to multiple outputs (nodes <cite>out1</cite> and <cite>out2</cite>):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;a_branch&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">inlets</span><span class="o">=</span><span class="s1">&#39;branch_input&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">outlets</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;branch_output_1&#39;</span><span class="p">,</span> <span class="s1">&#39;branch_output_2&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inp</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">inlets</span><span class="o">.</span><span class="n">branch_input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out1</span><span class="p">,</span> <span class="n">out2</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">outlets</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.hbranch</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To show that the inlet connection is built properly, assign a new
+value to the inlet node and verify that his value can actually be
+picked by the model:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">inp</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="mf">999.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">pick_input</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">input</span>
+<span class="go">input(999.0)</span>
+</pre></div>
+</div>
+<p>If no model is passed to method <cite>connect</cite>, the connections with
+the model already handled by this element are refreshed.  In the
+given example, the <cite>hbranch</cite> model could already le to connected
+to its inlet node, but not to its outlet nodes, which requires
+some parameter information on how to allocate the inflow to the
+different outlet nodes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">xpoints</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ypoints</span><span class="p">(</span><span class="n">branch_output_1</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">branch_output_2</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameters</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">doit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">RuntimeError</span>: <span class="n">The pointer of the acutal `PPDouble` instance at index 0 requested, but not prepared yet via `setpointer`.</span>
+</pre></div>
+</div>
+<p>The last command resulted in a somewhat strange error message.  The
+reason for the explained error is that the <cite>hbranch</cite> model does now
+know how to connect to the outlet nodes <cite>out1</cite> and <cite>out2</cite>, but has
+not been requested to do so.  When we do so, no error is raised:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameters</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">doit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we can prove that both the inlet and the outlet connections are
+build properly by verifying that the expected output values are
+actually passed to the outlet nodes while performing an simulation
+step with method <cite>doit</cite> above:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">out1</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">sim</span>
+<span class="go">sim(333.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out2</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">sim</span>
+<span class="go">sim(666.0)</span>
+</pre></div>
+</div>
+<p>If neither a model is passed nor an model is already handled, an
+erro is raised:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="s1">&#39;empty&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">AttributeError</span>: <span class="n">While trying to build the connections of the model handled by element `empty`, the following error occured: No model has been assigned to the element so far.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Element.prepare_allseries">
+<code class="descname">prepare_allseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.prepare_allseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.prepare_allseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the series objects of all <cite>input</cite>, <cite>flux</cite> and <cite>state</cite>
+sequences of the model handled by this element.</p>
+<p>Call this method before a simulation run, if you need access to
+(nearly) all simulated series of the handled model after the
+simulation run is finished.</p>
+<p>By default, the series are stored in RAM, which is the faster
+option.  If your RAM is limited, pass the <cite>False</cite> for function
+argument <cite>ramflag</cite> to store the series on disk.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Element.prepare_inputseries">
+<code class="descname">prepare_inputseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.prepare_inputseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.prepare_inputseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the series objects of the <cite>input</cite> sequences of the model
+handled by this element.</p>
+<p>See method <a class="reference internal" href="#hydpy.core.devicetools.Element.prepare_allseries" title="hydpy.core.devicetools.Element.prepare_allseries"><code class="xref py py-func docutils literal"><span class="pre">Element.prepare_allseries()</span></code></a> for further information.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Element.prepare_fluxseries">
+<code class="descname">prepare_fluxseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.prepare_fluxseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.prepare_fluxseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the series objects of the <cite>flux</cite> sequences of the model
+handled by this element.</p>
+<p>See method <a class="reference internal" href="#hydpy.core.devicetools.Element.prepare_allseries" title="hydpy.core.devicetools.Element.prepare_allseries"><code class="xref py py-func docutils literal"><span class="pre">Element.prepare_allseries()</span></code></a> for further information.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Element.prepare_stateseries">
+<code class="descname">prepare_stateseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.prepare_stateseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.prepare_stateseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare the series objects of the <cite>state</cite> sequences of the model
+handled by this element.</p>
+<p>See method <a class="reference internal" href="#hydpy.core.devicetools.Element.prepare_allseries" title="hydpy.core.devicetools.Element.prepare_allseries"><code class="xref py py-func docutils literal"><span class="pre">Element.prepare_allseries()</span></code></a> for further information.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Element.input_plot">
+<code class="descname">input_plot</code><span class="sig-paren">(</span><em>names=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.input_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.input_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the <cite>input</cite> series of the handled model.</p>
+<p>To plot the series of a subset of all sequences, pass the respective
+names.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Element.flux_plot">
+<code class="descname">flux_plot</code><span class="sig-paren">(</span><em>names=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.flux_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.flux_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the <cite>flux</cite> series of the handled model.</p>
+<p>To plot the series of a subset of all sequences, pass the respective
+names.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Element.state_plot">
+<code class="descname">state_plot</code><span class="sig-paren">(</span><em>names=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.state_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.state_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the <cite>state</cite> series of the handled model.</p>
+<p>To plot the series of a subset of all sequences, pass the respective
+names.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Element.assignrepr">
+<code class="descname">assignrepr</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Element.assignrepr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Element.assignrepr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the <cite>visual appearence</cite> of <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> objects.</p>
+<p>You can pass a string which prefixes the string representation.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.devicetools.Devices">
+<em class="property">class </em><code class="descclassname">hydpy.core.devicetools.</code><code class="descname">Devices</code><span class="sig-paren">(</span><em>*values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Devices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Devices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Base class for class <a class="reference internal" href="#hydpy.core.devicetools.Elements" title="hydpy.core.devicetools.Elements"><code class="xref py py-class docutils literal"><span class="pre">Elements</span></code></a> and class <a class="reference internal" href="#hydpy.core.devicetools.Nodes" title="hydpy.core.devicetools.Nodes"><code class="xref py py-class docutils literal"><span class="pre">Nodes</span></code></a>.</p>
+<p>There are only small differences between class <a class="reference internal" href="#hydpy.core.devicetools.Elements" title="hydpy.core.devicetools.Elements"><code class="xref py py-class docutils literal"><span class="pre">Elements</span></code></a>
+and class <a class="reference internal" href="#hydpy.core.devicetools.Nodes" title="hydpy.core.devicetools.Nodes"><code class="xref py py-class docutils literal"><span class="pre">Nodes</span></code></a>.  We focus our explanations on class
+<a class="reference internal" href="#hydpy.core.devicetools.Nodes" title="hydpy.core.devicetools.Nodes"><code class="xref py py-class docutils literal"><span class="pre">Nodes</span></code></a> arbitrarily.</p>
+<p>The following test objects are used to explain the methods
+and properties of class <a class="reference internal" href="#hydpy.core.devicetools.Device" title="hydpy.core.devicetools.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> (note the different types of
+the initialization arguments):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Nodes</span><span class="p">,</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Elements</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dummies</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">Nodes</span><span class="p">(</span><span class="s1">&#39;na&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                      <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;nb&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;W&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                      <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;nc&#39;</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;group_a&#39;</span><span class="p">,</span> <span class="s1">&#39;group_1&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>                      <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;nd&#39;</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;group_a&#39;</span><span class="p">,</span> <span class="s1">&#39;group_2&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>                      <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;ne&#39;</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;group_b&#39;</span><span class="p">,</span> <span class="s1">&#39;group_1&#39;</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dummies</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">Elements</span><span class="p">(</span><span class="s1">&#39;ea&#39;</span><span class="p">,</span> <span class="n">Element</span><span class="p">(</span><span class="s1">&#39;eb&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>In a nutshell, <a class="reference internal" href="#hydpy.core.devicetools.Devices" title="hydpy.core.devicetools.Devices"><code class="xref py py-class docutils literal"><span class="pre">Devices</span></code></a> instances are containers supporting
+attribute access.  You can access each device directly by its name:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="n">dummies</span><span class="o">.</span><span class="n">nodes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span><span class="o">.</span><span class="n">na</span>
+<span class="go">Node(&quot;na&quot;, variable=&quot;Q&quot;)</span>
+</pre></div>
+</div>
+<p>Wrong device names result in the following error message:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span><span class="o">.</span><span class="n">na_</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">AttributeError</span>: <span class="n">The selected Nodes object has neither a `na_` attribute nor does it handle a Node object with name or keyword `na_`, which could be returned.</span>
+</pre></div>
+</div>
+<p>Attribute deleting is supported:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;na&#39;</span> <span class="ow">in</span> <span class="n">nodes</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">nodes</span><span class="o">.</span><span class="n">na</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;na&#39;</span> <span class="ow">in</span> <span class="n">nodes</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">nodes</span><span class="o">.</span><span class="n">na</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">AttributeError</span>: <span class="n">The selected Nodes object has neither a `na` attribute nor does it handle a Node object named `na`, which could be deleted.</span>
+</pre></div>
+</div>
+<p>However, exemplified by the next example, setting devices as attributes
+“pythonically” could result in inconsistencies and is not allowed
+(see method <a class="reference internal" href="#hydpy.core.devicetools.Devices.add_device" title="hydpy.core.devicetools.Devices.add_device"><code class="xref py py-func docutils literal"><span class="pre">add_device()</span></code></a> instead):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span><span class="o">.</span><span class="n">NF</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;nf&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">NotImplementedError</span>: <span class="n">Setting attributes of Nodes objects could result in confusion whether a new attribute should be handled as a Node object or as a &quot;normal&quot; attribute and is thus not support.</span>
+</pre></div>
+</div>
+<p>The operators <cite>+</cite>, <cite>+=</cite>, <cite>-</cite> and <cite>-=</cite> support adding and removing
+groups of devices:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">subgroup</span> <span class="o">=</span> <span class="n">Nodes</span><span class="p">(</span><span class="s2">&quot;nc&quot;</span><span class="p">,</span> <span class="s2">&quot;ne&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span>
+<span class="go">Nodes(&quot;nb&quot;, &quot;nc&quot;, &quot;nd&quot;, &quot;ne&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subgroup</span>
+<span class="go">Nodes(&quot;nc&quot;, &quot;ne&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">-</span> <span class="n">subgroup</span>
+<span class="go">Nodes(&quot;nb&quot;, &quot;nd&quot;)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span>
+<span class="go">Nodes(&quot;nb&quot;, &quot;nc&quot;, &quot;nd&quot;, &quot;ne&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">-=</span> <span class="n">subgroup</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span>
+<span class="go">Nodes(&quot;nb&quot;, &quot;nd&quot;)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">+</span> <span class="n">subgroup</span>
+<span class="go">Nodes(&quot;nb&quot;, &quot;nc&quot;, &quot;nd&quot;, &quot;ne&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span>
+<span class="go">Nodes(&quot;nb&quot;, &quot;nd&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">+=</span> <span class="n">subgroup</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span>
+<span class="go">Nodes(&quot;nb&quot;, &quot;nc&quot;, &quot;nd&quot;, &quot;ne&quot;)</span>
+</pre></div>
+</div>
+<p>Trying to add already existing are to remove non existing devices
+does no harm:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span>
+<span class="go">Nodes(&quot;nb&quot;, &quot;nc&quot;, &quot;nd&quot;, &quot;ne&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">+</span> <span class="n">subgroup</span>
+<span class="go">Nodes(&quot;nb&quot;, &quot;nc&quot;, &quot;nd&quot;, &quot;ne&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">-</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;na&#39;</span><span class="p">)</span>
+<span class="go">Nodes(&quot;nb&quot;, &quot;nc&quot;, &quot;nd&quot;, &quot;ne&quot;)</span>
+</pre></div>
+</div>
+<p>Finally, the following “set operators” are supported:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">subgroup</span> <span class="o">&lt;</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">&lt;</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">&lt;</span> <span class="n">nodes</span>
+<span class="go">(True, False, False)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subgroup</span> <span class="o">&lt;=</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">&lt;=</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">&lt;=</span> <span class="n">nodes</span>
+<span class="go">(True, False, True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subgroup</span> <span class="o">==</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">==</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">==</span> <span class="n">nodes</span>
+<span class="go">(False, False, True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subgroup</span> <span class="o">!=</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">!=</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">!=</span> <span class="n">nodes</span>
+<span class="go">(True, True, False)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subgroup</span> <span class="o">&gt;=</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">&gt;=</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">&gt;=</span> <span class="n">nodes</span>
+<span class="go">(False, True, True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subgroup</span> <span class="o">&gt;</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">&gt;</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">&gt;</span> <span class="n">nodes</span>
+<span class="go">(False, True, False)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="hydpy.core.devicetools.Devices.add_device">
+<code class="descname">add_device</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Devices.add_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Devices.add_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the given <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> or <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> object.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Nodes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="n">Nodes</span><span class="p">(</span><span class="s1">&#39;old_node&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span><span class="o">.</span><span class="n">add_device</span><span class="p">(</span><span class="s1">&#39;new_node&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span>
+<span class="go">Nodes(&quot;new_node&quot;, &quot;old_node&quot;)</span>
+</pre></div>
+</div>
+<p>Note the implementation detail, that each new node knows the
+object it was added to:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="ow">in</span> <span class="n">nodes</span><span class="o">.</span><span class="n">new_node</span><span class="o">.</span><span class="n">_handlers</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Devices.remove_device">
+<code class="descname">remove_device</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Devices.remove_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Devices.remove_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the given <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> or <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> object.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Nodes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="n">Nodes</span><span class="p">(</span><span class="s1">&#39;node_x&#39;</span><span class="p">,</span> <span class="s1">&#39;node_y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node_x</span><span class="p">,</span> <span class="n">node_y</span> <span class="o">=</span> <span class="n">nodes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span><span class="o">.</span><span class="n">remove_device</span><span class="p">(</span><span class="s1">&#39;node_y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span>
+<span class="go">Nodes(&quot;node_x&quot;)</span>
+</pre></div>
+</div>
+<p>Note the implementation detail, that a new node forgots its
+container object, after it has been removed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="ow">in</span> <span class="n">node_x</span><span class="o">.</span><span class="n">_handlers</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="ow">in</span> <span class="n">node_y</span><span class="o">.</span><span class="n">_handlers</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.core.devicetools.Devices.names">
+<code class="descname">names</code><a class="headerlink" href="#hydpy.core.devicetools.Devices.names" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sorted tuple of the names of the handled devices.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dummies</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">names</span>
+<span class="go">(&#39;na&#39;, &#39;nb&#39;, &#39;nc&#39;, &#39;nd&#39;, &#39;ne&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.core.devicetools.Devices.devices">
+<code class="descname">devices</code><a class="headerlink" href="#hydpy.core.devicetools.Devices.devices" title="Permalink to this definition">¶</a></dt>
+<dd><p>A tuple of the handled devices sorted by the device names.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">tuple</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">dummies</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">devices</span><span class="p">)</span>
+<span class="go">(&#39;na&#39;, &#39;nb&#39;, &#39;nc&#39;, &#39;nd&#39;, &#39;ne&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.core.devicetools.Devices.keywords">
+<code class="descname">keywords</code><a class="headerlink" href="#hydpy.core.devicetools.Devices.keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of all keywords of all handled devices.</p>
+<p>In addition to attribute access via device names described above,
+<a class="reference internal" href="#hydpy.core.devicetools.Device" title="hydpy.core.devicetools.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> objects allow for attribute access via keywords.
+This allows for an efficient search of certain groups of devices.
+Lets use the example from above, where the nodes <cite>na</cite> and <cite>nb</cite>
+have no keywords but each of the other three nodes both belongs
+to either <cite>group_a</cite> or <cite>group_b</cite> and <cite>group_1</cite> or <cite>group_2</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="n">dummies</span><span class="o">.</span><span class="n">nodes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span>
+<span class="go">Nodes(&quot;na&quot;, &quot;nb&quot;, &quot;nc&quot;, &quot;nd&quot;, &quot;ne&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">keywords</span><span class="p">)</span>
+<span class="go">[&#39;group_1&#39;, &#39;group_2&#39;, &#39;group_a&#39;, &#39;group_b&#39;]</span>
+</pre></div>
+</div>
+<p>If you are interesting in inspecting all nodes belonging to <cite>group_a</cite>,
+build a selection:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">subgroup</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">group_1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subgroup</span>
+<span class="go">Nodes(&quot;nc&quot;, &quot;ne&quot;)</span>
+</pre></div>
+</div>
+<p>You can further restrict the search by also selecting the nodes also
+belonging to <cite>group_b</cite>, which holds true for node <cite>ne</cite> only:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">subsubgroup</span> <span class="o">=</span> <span class="n">subgroup</span><span class="o">.</span><span class="n">group_b</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subsubgroup</span>
+<span class="go">Nodes(&quot;ne&quot;)</span>
+</pre></div>
+</div>
+<p>Node that the keywords already used for building a subgroup of nodes
+are no informative anymore (as they hold true for each node) and are
+thus not shown anymore:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">subgroup</span><span class="o">.</span><span class="n">keywords</span><span class="p">)</span>
+<span class="go">[&#39;group_a&#39;, &#39;group_b&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">subsubgroup</span><span class="o">.</span><span class="n">keywords</span><span class="p">)</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+<p>The latter might be confusing, if you intend to work with a subgroup
+of nodes for a longer time.  After copying the subgroup, all keywords
+of the contained devices are available again:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">newgroup</span> <span class="o">=</span> <span class="n">subsubgroup</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">newgroup</span><span class="o">.</span><span class="n">keywords</span><span class="p">)</span>
+<span class="go">[&#39;group_1&#39;, &#39;group_b&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Devices.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Devices.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Devices.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a shallow copy of the actual <a class="reference internal" href="#hydpy.core.devicetools.Devices" title="hydpy.core.devicetools.Devices"><code class="xref py py-class docutils literal"><span class="pre">Devices</span></code></a> instance.</p>
+<p>Make a flat copy of the <a class="reference internal" href="#hydpy.core.devicetools.Nodes" title="hydpy.core.devicetools.Nodes"><code class="xref py py-class docutils literal"><span class="pre">Nodes</span></code></a> object defined above:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">dummies</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">dummies</span><span class="o">.</span><span class="n">nodes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">old</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Show that the copy is not completely flat:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new</span> <span class="o">==</span> <span class="n">old</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span> <span class="ow">is</span> <span class="n">old</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span><span class="o">.</span><span class="n">_devices</span> <span class="ow">is</span> <span class="n">old</span><span class="o">.</span><span class="n">_devices</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span><span class="o">.</span><span class="n">na</span> <span class="ow">is</span> <span class="n">new</span><span class="o">.</span><span class="n">na</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>The private variable <cite>_devices</cite> obviously has also been copied,
+but not the device <cite>na</cite>.  Allowing also to copy devices like <cite>na</cite>
+would be in conflict with using their names as identifiers.
+For this reason deep copying <a class="reference internal" href="#hydpy.core.devicetools.Devices" title="hydpy.core.devicetools.Devices"><code class="xref py py-class docutils literal"><span class="pre">Devices</span></code></a> objects is disabled:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dummies</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">NotImplementedError</span>: <span class="n">Deep copying of Nodes objects is not supported, as it would require to make deep copies of the Node objects themselves, which is in conflict with using their names as identifiers.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Devices.assignrepr">
+<code class="descname">assignrepr</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Devices.assignrepr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Devices.assignrepr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.devicetools.Nodes">
+<em class="property">class </em><code class="descclassname">hydpy.core.devicetools.</code><code class="descname">Nodes</code><span class="sig-paren">(</span><em>*values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hydpy.core.devicetools.Devices" title="hydpy.core.devicetools.Devices"><code class="xref py py-class docutils literal"><span class="pre">hydpy.core.devicetools.Devices</span></code></a></p>
+<p>A container for handling <a class="reference internal" href="#hydpy.core.devicetools.Node" title="hydpy.core.devicetools.Node"><code class="xref py py-class docutils literal"><span class="pre">Node</span></code></a> objects.</p>
+<dl class="method">
+<dt id="hydpy.core.devicetools.Nodes.prepare_allseries">
+<code class="descname">prepare_allseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Nodes.prepare_allseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Nodes.prepare_allseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call method <a class="reference internal" href="#hydpy.core.devicetools.Node.prepare_allseries" title="hydpy.core.devicetools.Node.prepare_allseries"><code class="xref py py-func docutils literal"><span class="pre">prepare_allseries()</span></code></a> of all handled
+elements.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Nodes.prepare_simseries">
+<code class="descname">prepare_simseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Nodes.prepare_simseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Nodes.prepare_simseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call method <a class="reference internal" href="#hydpy.core.devicetools.Node.prepare_simseries" title="hydpy.core.devicetools.Node.prepare_simseries"><code class="xref py py-func docutils literal"><span class="pre">prepare_simseries()</span></code></a> of all handled
+elements.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Nodes.prepare_obsseries">
+<code class="descname">prepare_obsseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Nodes.prepare_obsseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Nodes.prepare_obsseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call method <a class="reference internal" href="#hydpy.core.devicetools.Node.prepare_obsseries" title="hydpy.core.devicetools.Node.prepare_obsseries"><code class="xref py py-func docutils literal"><span class="pre">prepare_obsseries()</span></code></a> of all handled
+elements.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.devicetools.Elements">
+<em class="property">class </em><code class="descclassname">hydpy.core.devicetools.</code><code class="descname">Elements</code><span class="sig-paren">(</span><em>*values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Elements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hydpy.core.devicetools.Devices" title="hydpy.core.devicetools.Devices"><code class="xref py py-class docutils literal"><span class="pre">hydpy.core.devicetools.Devices</span></code></a></p>
+<p>A container for handling <a class="reference internal" href="#hydpy.core.devicetools.Element" title="hydpy.core.devicetools.Element"><code class="xref py py-class docutils literal"><span class="pre">Element</span></code></a> objects.</p>
+<dl class="method">
+<dt id="hydpy.core.devicetools.Elements.prepare_allseries">
+<code class="descname">prepare_allseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Elements.prepare_allseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Elements.prepare_allseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call method <a class="reference internal" href="#hydpy.core.devicetools.Element.prepare_allseries" title="hydpy.core.devicetools.Element.prepare_allseries"><code class="xref py py-func docutils literal"><span class="pre">prepare_allseries()</span></code></a> of all handled
+elements.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Elements.prepare_inputseries">
+<code class="descname">prepare_inputseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Elements.prepare_inputseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Elements.prepare_inputseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call method <a class="reference internal" href="#hydpy.core.devicetools.Element.prepare_inputseries" title="hydpy.core.devicetools.Element.prepare_inputseries"><code class="xref py py-func docutils literal"><span class="pre">prepare_inputseries()</span></code></a> of all handled
+elements.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Elements.prepare_fluxseries">
+<code class="descname">prepare_fluxseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Elements.prepare_fluxseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Elements.prepare_fluxseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call method <a class="reference internal" href="#hydpy.core.devicetools.Element.prepare_fluxseries" title="hydpy.core.devicetools.Element.prepare_fluxseries"><code class="xref py py-func docutils literal"><span class="pre">prepare_fluxseries()</span></code></a> of all handled
+elements.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.devicetools.Elements.prepare_stateseries">
+<code class="descname">prepare_stateseries</code><span class="sig-paren">(</span><em>ramflag=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/devicetools.html#Elements.prepare_stateseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.devicetools.Elements.prepare_stateseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call method <a class="reference internal" href="#hydpy.core.devicetools.Element.prepare_stateseries" title="hydpy.core.devicetools.Element.prepare_stateseries"><code class="xref py py-func docutils literal"><span class="pre">prepare_stateseries()</span></code></a> of all handled
+elements.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="connectiontools.html"
+                        title="previous chapter">connectiontools</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="dummytools.html"
+                        title="next chapter">dummytools</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/devicetools.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dummytools.html" title="dummytools"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="connectiontools.html" title="connectiontools"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="core.html" >Core Modules</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

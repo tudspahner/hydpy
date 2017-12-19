@@ -1,0 +1,1296 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>hydpy.models.dam.dam_model &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for hydpy.models.dam.dam_model</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># imports...</span>
+<span class="c1"># ...standard library</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="c1"># ...HydPy specific</span>
+<span class="kn">from</span> <span class="nn">hydpy.core</span> <span class="k">import</span> <span class="n">modeltools</span>
+<span class="kn">from</span> <span class="nn">hydpy.cythons</span> <span class="k">import</span> <span class="n">smoothutils</span>
+
+
+<div class="viewcode-block" id="pic_inflow_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.pic_inflow_v1">[docs]</a><span class="k">def</span> <span class="nf">pic_inflow_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Update the inlet link sequence.&quot;&quot;&quot;</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">inl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">inlets</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">inflow</span> <span class="o">=</span> <span class="n">inl</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="pic_totalremotedischarge_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.pic_totalremotedischarge_v1">[docs]</a><span class="k">def</span> <span class="nf">pic_totalremotedischarge_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Update the receiver link sequence.&quot;&quot;&quot;</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">rec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">receivers</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">totalremotedischarge</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="update_loggedtotalremotedischarge_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.update_loggedtotalremotedischarge_v1">[docs]</a><span class="k">def</span> <span class="nf">update_loggedtotalremotedischarge_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Log a new entry of discharge at a cross section far downstream.</span>
+
+<span class="sd">    Required control parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.NmbLogEntries`</span>
+
+<span class="sd">    Required flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.TotalRemoteDischarge`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_logs.LoggedTotalRemoteDischarge`</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        The following example shows that, with each new method call, the</span>
+<span class="sd">        three memorized values are successively moved to the right and the</span>
+<span class="sd">        respective new value is stored on the bare left position:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; nmblogentries(3)</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.testtools import UnitTest</span>
+<span class="sd">        &gt;&gt;&gt; test = UnitTest(model, model.update_loggedtotalremotedischarge_v1,</span>
+<span class="sd">        ...                 last_example=4)</span>
+<span class="sd">        &gt;&gt;&gt; test.nexts.totalremotedischarge = [1., 3., 2., 4]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | totalremotedischarge |           loggedtotalremotedischarge |</span>
+<span class="sd">        ---------------------------------------------------------------------</span>
+<span class="sd">        |   1 |                  1.0 | 1.0  nan                         nan |</span>
+<span class="sd">        |   2 |                  3.0 | 3.0  1.0                         nan |</span>
+<span class="sd">        |   3 |                  2.0 | 2.0  3.0                         1.0 |</span>
+<span class="sd">        |   4 |                  4.0 | 4.0  2.0                         3.0 |</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">logs</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">con</span><span class="o">.</span><span class="n">nmblogentries</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">loggedtotalremotedischarge</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> \
+                                <span class="n">log</span><span class="o">.</span><span class="n">loggedtotalremotedischarge</span><span class="p">[</span><span class="n">idx</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">loggedtotalremotedischarge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">flu</span><span class="o">.</span><span class="n">totalremotedischarge</span></div>
+
+
+<div class="viewcode-block" id="calc_waterlevel_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.calc_waterlevel_v1">[docs]</a><span class="k">def</span> <span class="nf">calc_waterlevel_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determine the water level based on an artificial neural network</span>
+<span class="sd">    describing the relationship between water level and water stage.</span>
+
+<span class="sd">    Required control parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.WaterVolume2WaterLevel`</span>
+
+<span class="sd">    Required state sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_states.WaterVolume`</span>
+
+<span class="sd">    Calculated aide sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_aides.WaterLevel`</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        Prepare a dam model:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+
+<span class="sd">        Prepare a very simple relationship based on one single neuron:</span>
+
+<span class="sd">        &gt;&gt;&gt; watervolume2waterlevel(</span>
+<span class="sd">        ...         nmb_inputs=1, nmb_neurons=(1,), nmb_outputs=1,</span>
+<span class="sd">        ...         weights_input=0.5, weights_output=1.0,</span>
+<span class="sd">        ...         intercepts_hidden=0.0, intercepts_output=-0.5)</span>
+
+<span class="sd">        At least in the water volume range used in the following examples,</span>
+<span class="sd">        the shape of the relationship looks acceptable:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.testtools import UnitTest</span>
+<span class="sd">        &gt;&gt;&gt; test = UnitTest(model, model.calc_waterlevel_v1, last_example=10)</span>
+<span class="sd">        &gt;&gt;&gt; test.nexts.watervolume = range(10)</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | watervolume | waterlevel |</span>
+<span class="sd">        ----------------------------------</span>
+<span class="sd">        |   1 |         0.0 |        0.0 |</span>
+<span class="sd">        |   2 |         1.0 |   0.122459 |</span>
+<span class="sd">        |   3 |         2.0 |   0.231059 |</span>
+<span class="sd">        |   4 |         3.0 |   0.317574 |</span>
+<span class="sd">        |   5 |         4.0 |   0.380797 |</span>
+<span class="sd">        |   6 |         5.0 |   0.424142 |</span>
+<span class="sd">        |   7 |         6.0 |   0.452574 |</span>
+<span class="sd">        |   8 |         7.0 |   0.470688 |</span>
+<span class="sd">        |   9 |         8.0 |   0.482014 |</span>
+<span class="sd">        |  10 |         9.0 |   0.489013 |</span>
+
+<span class="sd">        For more realistic approximations of measured relationships between</span>
+<span class="sd">        water level and volume, larger neural networks are required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">fastaccess_new</span>
+    <span class="n">aid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">aides</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">con</span><span class="o">.</span><span class="n">watervolume2waterlevel</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">watervolume</span>
+    <span class="n">con</span><span class="o">.</span><span class="n">watervolume2waterlevel</span><span class="o">.</span><span class="n">process_actual_input</span><span class="p">()</span>
+    <span class="n">aid</span><span class="o">.</span><span class="n">waterlevel</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">watervolume2waterlevel</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="calc_naturalremotedischarge_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.calc_naturalremotedischarge_v1">[docs]</a><span class="k">def</span> <span class="nf">calc_naturalremotedischarge_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Try to estimate the natural discharge of a cross section far downstream</span>
+<span class="sd">    based on the last few simulation steps.</span>
+
+<span class="sd">    Required control parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.NmbLogEntries`</span>
+
+<span class="sd">    Required log sequences:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_logs.LoggedTotalRemoteDischarge`</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_logs.LoggedOutflow`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.NaturalRemoteDischarge`</span>
+
+<span class="sd">    Basic equation:</span>
+<span class="sd">      :math:`RemoteDemand =</span>
+<span class="sd">      max(\\frac{\\Sigma(LoggedTotalRemoteDischarge - LoggedOutflow)}</span>
+<span class="sd">      {NmbLogEntries}), 0)`</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        Usually, the mean total remote flow should be larger than the mean</span>
+<span class="sd">        dam outflows.  Then the estimated natural remote discharge is simply</span>
+<span class="sd">        the difference of both mean values:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; nmblogentries(3)</span>
+<span class="sd">        &gt;&gt;&gt; logs.loggedtotalremotedischarge(2.5, 2.0, 1.5)</span>
+<span class="sd">        &gt;&gt;&gt; logs.loggedoutflow(2.0, 1.0, 0.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.calc_naturalremotedischarge_v1()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.naturalremotedischarge</span>
+<span class="sd">        naturalremotedischarge(1.0)</span>
+
+<span class="sd">        Due to the wave travel times, the difference between remote discharge</span>
+<span class="sd">        and dam outflow mights sometimes be negative.  To avoid negative</span>
+<span class="sd">        estimates of natural discharge, it its value is set to zero in</span>
+<span class="sd">        such cases:</span>
+
+<span class="sd">        &gt;&gt;&gt; logs.loggedoutflow(4.0, 3.0, 5.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.calc_naturalremotedischarge_v1()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.naturalremotedischarge</span>
+<span class="sd">        naturalremotedischarge(0.0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">logs</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">naturalremotedischarge</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">con</span><span class="o">.</span><span class="n">nmblogentries</span><span class="p">):</span>
+        <span class="n">flu</span><span class="o">.</span><span class="n">naturalremotedischarge</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">loggedtotalremotedischarge</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">log</span><span class="o">.</span><span class="n">loggedoutflow</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">flu</span><span class="o">.</span><span class="n">naturalremotedischarge</span> <span class="o">&gt;</span> <span class="mf">0.</span><span class="p">:</span>
+        <span class="n">flu</span><span class="o">.</span><span class="n">naturalremotedischarge</span> <span class="o">/=</span> <span class="n">con</span><span class="o">.</span><span class="n">nmblogentries</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">flu</span><span class="o">.</span><span class="n">naturalremotedischarge</span> <span class="o">=</span> <span class="mf">0.</span></div>
+
+
+<div class="viewcode-block" id="calc_remotedemand_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.calc_remotedemand_v1">[docs]</a><span class="k">def</span> <span class="nf">calc_remotedemand_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Estimate the discharge demand of a cross section far downstream.</span>
+
+<span class="sd">    Required control parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.RemoteDischargeMinimum`</span>
+
+<span class="sd">    Required derived parameters:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.TOY`</span>
+
+<span class="sd">    Required flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.NaturalRemoteDischage`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.RemoteDemand`</span>
+
+<span class="sd">    Basic equation:</span>
+<span class="sd">      :math:`RemoteDemand =</span>
+<span class="sd">      max(RemoteDischargeMinimum - NaturalRemoteDischarge, 0`</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        Low water elevation is often restricted to specific month of the year.</span>
+<span class="sd">        Sometimes the pursued lowest discharge value varies over the year</span>
+<span class="sd">        to allow for a low flow variability that is in some agreement with</span>
+<span class="sd">        the natural flow regime.  The HydPy-Dam model supports such</span>
+<span class="sd">        variations.  Hence we define a short simulation time period first.</span>
+<span class="sd">        This enables us to show how the related parameters values can be</span>
+<span class="sd">        defined and how the calculation of the `remote` water demand</span>
+<span class="sd">        throughout the year actually works:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy import pub</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.timetools import Timegrids, Timegrid</span>
+<span class="sd">        &gt;&gt;&gt; pub.timegrids = Timegrids(Timegrid(&#39;2001.03.30&#39;,</span>
+<span class="sd">        ...                                    &#39;2001.04.03&#39;,</span>
+<span class="sd">        ...                                    &#39;1d&#39;))</span>
+
+<span class="sd">        Prepare the dam model:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+
+<span class="sd">        Assume the required discharge at a gauge downstream beeing 2 m³/s</span>
+<span class="sd">        in the hydrological summer half-year (April to October).  In the</span>
+<span class="sd">        winter month (November to May), there is no such requirement:</span>
+
+<span class="sd">        &gt;&gt;&gt; remotedischargeminimum(_11_1_12=0.0, _03_31_12=0.0,</span>
+<span class="sd">        ...                        _04_1_12=2.0, _10_31_12=2.0)</span>
+<span class="sd">        &gt;&gt;&gt; derived.toy.update()</span>
+
+<span class="sd">        Prepare a test function, that calculates the remote discharge demand</span>
+<span class="sd">        based on the parameter values defined above and for natural remote</span>
+<span class="sd">        discharge values ranging between 0 and 3 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.testtools import UnitTest</span>
+<span class="sd">        &gt;&gt;&gt; test = UnitTest(model, model.calc_remotedemand_v1, last_example=4,</span>
+<span class="sd">        ...                 parseqs=(fluxes.naturalremotedischarge,</span>
+<span class="sd">        ...                          fluxes.remotedemand))</span>
+<span class="sd">        &gt;&gt;&gt; test.nexts.naturalremotedischarge = range(4)</span>
+
+<span class="sd">        On April 1, the required discharge is 2 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.04.01&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | naturalremotedischarge | remotedemand |</span>
+<span class="sd">        -----------------------------------------------</span>
+<span class="sd">        |   1 |                    0.0 |          2.0 |</span>
+<span class="sd">        |   2 |                    1.0 |          1.0 |</span>
+<span class="sd">        |   3 |                    2.0 |          0.0 |</span>
+<span class="sd">        |   4 |                    3.0 |          0.0 |</span>
+
+<span class="sd">        On May 31, the required discharge is 0 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.03.31&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | naturalremotedischarge | remotedemand |</span>
+<span class="sd">        -----------------------------------------------</span>
+<span class="sd">        |   1 |                    0.0 |          0.0 |</span>
+<span class="sd">        |   2 |                    1.0 |          0.0 |</span>
+<span class="sd">        |   3 |                    2.0 |          0.0 |</span>
+<span class="sd">        |   4 |                    3.0 |          0.0 |</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">der</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">derived</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">remotedemand</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">con</span><span class="o">.</span><span class="n">remotedischargeminimum</span><span class="p">[</span><span class="n">der</span><span class="o">.</span><span class="n">toy</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span><span class="p">]]</span> <span class="o">-</span>
+                           <span class="n">flu</span><span class="o">.</span><span class="n">naturalremotedischarge</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="calc_remotefailure_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.calc_remotefailure_v1">[docs]</a><span class="k">def</span> <span class="nf">calc_remotefailure_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Estimate the shortfall of actual discharge under the required discharge</span>
+<span class="sd">    of a cross section far downstream.</span>
+
+<span class="sd">    Required control parameters:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.NmbLogEntries`</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.RemoteDischargeMinimum`</span>
+
+<span class="sd">    Required derived parameters:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.TOY`</span>
+
+<span class="sd">    Required log sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_logs.LoggedTotalRemoteDischarge`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.RemoteFailure`</span>
+
+<span class="sd">    Basic equation:</span>
+<span class="sd">      :math:`RemoteFailure =</span>
+<span class="sd">      \\frac{\\Sigma(LoggedTotalRemoteDischarge)}{NmbLogEntries} -</span>
+<span class="sd">      RemoteDischargeMinimum`</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        As explained in the documentation on method</span>
+<span class="sd">        :func:`calc_remotedemand_v1`, we have to define a</span>
+<span class="sd">        simulation period first:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy import pub</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.timetools import Timegrids, Timegrid</span>
+<span class="sd">        &gt;&gt;&gt; pub.timegrids = Timegrids(Timegrid(&#39;2001.03.30&#39;,</span>
+<span class="sd">        ...                                    &#39;2001.04.03&#39;,</span>
+<span class="sd">        ...                                    &#39;1d&#39;))</span>
+
+<span class="sd">        Now we prepare a dam model with log sequences memorizing three values:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; nmblogentries(3)</span>
+
+<span class="sd">        Again, the required discharge is 2 m³/s in summer and 0 m³/s in winter:</span>
+
+<span class="sd">        &gt;&gt;&gt; remotedischargeminimum(_11_1_12=0.0, _03_31_12=0.0,</span>
+<span class="sd">        ...                        _04_1_12=2.0, _10_31_12=2.0)</span>
+<span class="sd">        &gt;&gt;&gt; derived.toy.update()</span>
+
+<span class="sd">        Let it be supposed that the actual discharge at the remote</span>
+<span class="sd">        cross section droped from 2 m³/s to 0  m³/s over the last three days:</span>
+
+<span class="sd">        &gt;&gt;&gt; logs.loggedtotalremotedischarge(0.0, 1.0, 2.0)</span>
+
+<span class="sd">        This means that for the April 1 there would have been an averaged</span>
+<span class="sd">        shortfall of 1 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.04.01&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; model.calc_remotefailure_v1()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.remotefailure</span>
+<span class="sd">        remotefailure(1.0)</span>
+
+<span class="sd">        Instead for May 31 there would have been an excess of 1 m³/s, which</span>
+<span class="sd">        is interpreted to be a &quot;negative failure&quot;:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.03.31&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; model.calc_remotefailure_v1()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.remotefailure</span>
+<span class="sd">        remotefailure(-1.0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">der</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">derived</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">logs</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">remotefailure</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">con</span><span class="o">.</span><span class="n">nmblogentries</span><span class="p">):</span>
+        <span class="n">flu</span><span class="o">.</span><span class="n">remotefailure</span> <span class="o">-=</span> <span class="n">log</span><span class="o">.</span><span class="n">loggedtotalremotedischarge</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">remotefailure</span> <span class="o">/=</span> <span class="n">con</span><span class="o">.</span><span class="n">nmblogentries</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">remotefailure</span> <span class="o">+=</span> <span class="n">con</span><span class="o">.</span><span class="n">remotedischargeminimum</span><span class="p">[</span><span class="n">der</span><span class="o">.</span><span class="n">toy</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="calc_requiredremoterelease_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.calc_requiredremoterelease_v1">[docs]</a><span class="k">def</span> <span class="nf">calc_requiredremoterelease_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Guess the required release necessary to not fall below the threshold</span>
+<span class="sd">    value at a cross section far downstream with a certain level of certainty.</span>
+
+<span class="sd">    Required control parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_control.RemoteDischargeSafety`</span>
+
+<span class="sd">    Required derived parameters:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.RemoteDischargeSmoothPar`</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.TOY`</span>
+
+<span class="sd">    Required flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.RemoteDemand`</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.RemoteFailure`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.RequiredRelease`</span>
+
+<span class="sd">    Basic equation:</span>
+<span class="sd">      :math:`RequiredRemoteRelease = RemoteDemand + RemoteDischargeSafety</span>
+<span class="sd">      \\cdot smooth\_logistic1(RemoteFailure, RemoteDischargeSmoothPar)`</span>
+
+<span class="sd">    Used auxiliary method:</span>
+<span class="sd">      :func:`~hydpy.cythons.smoothutils.smooth_logistic1`.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        As in the examples above, define a short simulation time period first:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy import pub</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.timetools import Timegrids, Timegrid</span>
+<span class="sd">        &gt;&gt;&gt; pub.timegrids = Timegrids(Timegrid(&#39;2001.03.30&#39;,</span>
+<span class="sd">        ...                                    &#39;2001.04.03&#39;,</span>
+<span class="sd">        ...                                    &#39;1d&#39;))</span>
+
+<span class="sd">        Prepare the dam model:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; derived.toy.update()</span>
+
+<span class="sd">        Define a savety factor of 0.5 m³/s for the summer months and</span>
+<span class="sd">        no savety factor at all for the winter months:</span>
+
+<span class="sd">        &gt;&gt;&gt; remotedischargesavety(_11_1_12=0.0, _03_31_12=0.0,</span>
+<span class="sd">        ...                       _04_1_12=1.0, _10_31_12=1.0)</span>
+<span class="sd">        &gt;&gt;&gt; derived.remotedischargesmoothpar.update()</span>
+
+<span class="sd">        Assume the actual demand at the cross section downsstream has actually</span>
+<span class="sd">        been estimated to be 2 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; fluxes.remotedemand = 2.0</span>
+
+<span class="sd">        Prepare a test function, that calculates the required discharge</span>
+<span class="sd">        based on the parameter values defined above and for a &quot;remote</span>
+<span class="sd">        failure&quot; values ranging between -4 and 4 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.testtools import UnitTest</span>
+<span class="sd">        &gt;&gt;&gt; test = UnitTest(model, model.calc_requiredremoterelease_v1,</span>
+<span class="sd">        ...                 last_example=9,</span>
+<span class="sd">        ...                 parseqs=(fluxes.remotefailure,</span>
+<span class="sd">        ...                          fluxes.requiredremoterelease))</span>
+<span class="sd">        &gt;&gt;&gt; test.nexts.remotefailure = range(-4, 5)</span>
+
+<span class="sd">        On May 31, the savety factor is 0 m³/s.  Hence no discharge is</span>
+<span class="sd">        added to the estimated remote demand of 2 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.03.31&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | remotefailure | requiredremoterelease |</span>
+<span class="sd">        -----------------------------------------------</span>
+<span class="sd">        |   1 |          -4.0 |                   2.0 |</span>
+<span class="sd">        |   2 |          -3.0 |                   2.0 |</span>
+<span class="sd">        |   3 |          -2.0 |                   2.0 |</span>
+<span class="sd">        |   4 |          -1.0 |                   2.0 |</span>
+<span class="sd">        |   5 |           0.0 |                   2.0 |</span>
+<span class="sd">        |   6 |           1.0 |                   2.0 |</span>
+<span class="sd">        |   7 |           2.0 |                   2.0 |</span>
+<span class="sd">        |   8 |           3.0 |                   2.0 |</span>
+<span class="sd">        |   9 |           4.0 |                   2.0 |</span>
+
+<span class="sd">        On April 1, the savety factor is 1 m³/s.  If the remote failure was</span>
+<span class="sd">        exactly zero in the past, meaning the control of the dam was perfect,</span>
+<span class="sd">        only 0.5 m³/s are added to the estimated remote demand of 2 m³/s.</span>
+<span class="sd">        If the actual recharge did actually fall below the threshold value,</span>
+<span class="sd">        up to 1 m³/s is added. If the the actual discharge exceeded the</span>
+<span class="sd">        threshold value by 2 or 3 m³/s, virtually nothing is added:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.04.01&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | remotefailure | requiredremoterelease |</span>
+<span class="sd">        -----------------------------------------------</span>
+<span class="sd">        |   1 |          -4.0 |                   2.0 |</span>
+<span class="sd">        |   2 |          -3.0 |              2.000001 |</span>
+<span class="sd">        |   3 |          -2.0 |              2.000102 |</span>
+<span class="sd">        |   4 |          -1.0 |                  2.01 |</span>
+<span class="sd">        |   5 |           0.0 |                   2.5 |</span>
+<span class="sd">        |   6 |           1.0 |                  2.99 |</span>
+<span class="sd">        |   7 |           2.0 |              2.999898 |</span>
+<span class="sd">        |   8 |           3.0 |              2.999999 |</span>
+<span class="sd">        |   9 |           4.0 |                   3.0 |</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">der</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">derived</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">requiredremoterelease</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">flu</span><span class="o">.</span><span class="n">remotedemand</span><span class="o">+</span><span class="n">con</span><span class="o">.</span><span class="n">remotedischargesavety</span><span class="p">[</span><span class="n">der</span><span class="o">.</span><span class="n">toy</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span><span class="p">]]</span> <span class="o">*</span>
+            <span class="n">smoothutils</span><span class="o">.</span><span class="n">smooth_logistic1</span><span class="p">(</span>
+                    <span class="n">flu</span><span class="o">.</span><span class="n">remotefailure</span><span class="p">,</span>
+                    <span class="n">der</span><span class="o">.</span><span class="n">remotedischargesmoothpar</span><span class="p">[</span><span class="n">der</span><span class="o">.</span><span class="n">toy</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span><span class="p">]]))</span></div>
+
+
+<div class="viewcode-block" id="calc_requiredrelease_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.calc_requiredrelease_v1">[docs]</a><span class="k">def</span> <span class="nf">calc_requiredrelease_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the total water release required for reducing drought events.</span>
+
+<span class="sd">    Required control parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_control.NearDischargeMinimumThreshold`</span>
+
+<span class="sd">    Required derived parameters:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.NearDischargeMinimumSmoothPar2`</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.TOY`</span>
+
+<span class="sd">    Required flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.RequiredRemoteRelease`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.RequiredRelease`</span>
+
+<span class="sd">    Basic equation:</span>
+<span class="sd">      :math:`RequiredRelease = RequiredRemoteRelease</span>
+<span class="sd">      \\cdot smooth\_logistic2(</span>
+<span class="sd">      RequiredRemoteRelease-NearDischargeMinimumThreshold,</span>
+<span class="sd">      NearDischargeMinimumSmoothPar2)`</span>
+
+<span class="sd">    Used auxiliary method:</span>
+<span class="sd">      :func:`~hydpy.cythons.smoothutils.smooth_logistic2`.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        As in the examples above, define a short simulation time period first:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy import pub</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.timetools import Timegrids, Timegrid</span>
+<span class="sd">        &gt;&gt;&gt; pub.timegrids = Timegrids(Timegrid(&#39;2001.03.30&#39;,</span>
+<span class="sd">        ...                                    &#39;2001.04.03&#39;,</span>
+<span class="sd">        ...                                    &#39;1d&#39;))</span>
+
+<span class="sd">        Prepare the dam model:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; derived.toy.update()</span>
+
+<span class="sd">        Define a minimum discharge value for a cross section immediately</span>
+<span class="sd">        downstream of 4 m³/s for the summer months and of 0 m³/s for the</span>
+<span class="sd">        winter months:</span>
+
+<span class="sd">        &gt;&gt;&gt; neardischargeminimumthreshold(_11_1_12=0.0, _03_31_12=0.0,</span>
+<span class="sd">        ...                               _04_1_12=4.0, _10_31_12=4.0)</span>
+
+<span class="sd">        Also define related tolerance values that are 1 m³/s in summer and</span>
+<span class="sd">        0 m³/s in winter:</span>
+
+<span class="sd">        &gt;&gt;&gt; neardischargeminimumtolerance(_11_1_12=0.0, _03_31_12=0.0,</span>
+<span class="sd">        ...                               _04_1_12=1.0, _10_31_12=1.0)</span>
+<span class="sd">        &gt;&gt;&gt; derived.neardischargeminimumsmoothpar2.update()</span>
+
+<span class="sd">        Prepare a test function, that calculates the required total discharge</span>
+<span class="sd">        based on the parameter values defined above and for a required value</span>
+<span class="sd">        for a cross section far downstream ranging from 0 m³/s to 8 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.testtools import UnitTest</span>
+<span class="sd">        &gt;&gt;&gt; test = UnitTest(model, model.calc_requiredrelease_v1,</span>
+<span class="sd">        ...                 last_example=9,</span>
+<span class="sd">        ...                 parseqs=(fluxes.requiredremoterelease,</span>
+<span class="sd">        ...                          fluxes.requiredrelease))</span>
+<span class="sd">        &gt;&gt;&gt; test.nexts.requiredremoterelease = range(9)</span>
+
+<span class="sd">        On May 31, both the threshold and the tolerance value are 0 m³/s.</span>
+<span class="sd">        Hence the required total and the required remote release are equal:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.03.31&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | requiredremoterelease | requiredrelease |</span>
+<span class="sd">        -------------------------------------------------</span>
+<span class="sd">        |   1 |                   0.0 |             0.0 |</span>
+<span class="sd">        |   2 |                   1.0 |             1.0 |</span>
+<span class="sd">        |   3 |                   2.0 |             2.0 |</span>
+<span class="sd">        |   4 |                   3.0 |             3.0 |</span>
+<span class="sd">        |   5 |                   4.0 |             4.0 |</span>
+<span class="sd">        |   6 |                   5.0 |             5.0 |</span>
+<span class="sd">        |   7 |                   6.0 |             6.0 |</span>
+<span class="sd">        |   8 |                   7.0 |             7.0 |</span>
+<span class="sd">        |   9 |                   8.0 |             8.0 |</span>
+
+<span class="sd">        On April 1, the threshold value is 4 m³/s and the tolerance value</span>
+<span class="sd">        is 1 m³/s.  For low values of the required remote release, the</span>
+<span class="sd">        required total release approximates the threshold value. For large</span>
+<span class="sd">        values, it approximates the required remote release itself.  Around</span>
+<span class="sd">        the threshold value, due to the tolerance value of 1 m³/s, the</span>
+<span class="sd">        required total release is a little larger than both the treshold</span>
+<span class="sd">        value and the required remote release value:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.04.01&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | requiredremoterelease | requiredrelease |</span>
+<span class="sd">        -------------------------------------------------</span>
+<span class="sd">        |   1 |                   0.0 |             4.0 |</span>
+<span class="sd">        |   2 |                   1.0 |        4.000012 |</span>
+<span class="sd">        |   3 |                   2.0 |        4.000349 |</span>
+<span class="sd">        |   4 |                   3.0 |            4.01 |</span>
+<span class="sd">        |   5 |                   4.0 |        4.205524 |</span>
+<span class="sd">        |   6 |                   5.0 |            5.01 |</span>
+<span class="sd">        |   7 |                   6.0 |        6.000349 |</span>
+<span class="sd">        |   8 |                   7.0 |        7.000012 |</span>
+<span class="sd">        |   9 |                   8.0 |             8.0 |</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">der</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">derived</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">requiredrelease</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">neardischargeminimumthreshold</span><span class="p">[</span>
+                                                    <span class="n">der</span><span class="o">.</span><span class="n">toy</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span><span class="p">]]</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">requiredrelease</span> <span class="o">=</span> <span class="p">(</span><span class="n">flu</span><span class="o">.</span><span class="n">requiredrelease</span> <span class="o">+</span>
+                           <span class="n">smoothutils</span><span class="o">.</span><span class="n">smooth_logistic2</span><span class="p">(</span>
+                               <span class="n">flu</span><span class="o">.</span><span class="n">requiredremoterelease</span><span class="o">-</span><span class="n">flu</span><span class="o">.</span><span class="n">requiredrelease</span><span class="p">,</span>
+                               <span class="n">der</span><span class="o">.</span><span class="n">neardischargeminimumsmoothpar2</span><span class="p">[</span>
+                                                    <span class="n">der</span><span class="o">.</span><span class="n">toy</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span><span class="p">]]))</span></div>
+
+
+<div class="viewcode-block" id="calc_targetedrelease_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.calc_targetedrelease_v1">[docs]</a><span class="k">def</span> <span class="nf">calc_targetedrelease_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the targeted water release for reducing drought events,</span>
+<span class="sd">    taking into account both the required water release and the actual</span>
+<span class="sd">    inflow into the dam.</span>
+
+<span class="sd">    Some dams are supposed to maintain a certain degree of low flow</span>
+<span class="sd">    variability downstream.  Method</span>
+<span class="sd">    :func:`~hydpy.models.dam.dam_model.calc_targetedrelease_v1` simulates</span>
+<span class="sd">    this by (approximately) passing inflow as outflow whenever inflow</span>
+<span class="sd">    is below the value of the threshold parameter</span>
+<span class="sd">    :class:`~hydpy.models.dam.dam_control.NearDischargeMinimumThreshold`.</span>
+
+<span class="sd">    Required control parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_control.NearDischargeMinimumThreshold`</span>
+
+<span class="sd">    Required derived parameters:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.NearDischargeMinimumSmoothPar1`</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.TOY`</span>
+
+<span class="sd">    Required flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.RequiredRelease`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.TargetedRelease`</span>
+
+<span class="sd">    Used auxiliary method:</span>
+<span class="sd">      :func:`~hydpy.cythons.smoothutils.smooth_logistic1`</span>
+
+<span class="sd">    Basic equation:</span>
+<span class="sd">      :math:`TargetedRelease =</span>
+<span class="sd">      w \\cdot RequiredRelease + (1-w) \\cdot Inflow`</span>
+
+<span class="sd">      :math:`w = smooth\\_logistic1(</span>
+<span class="sd">      Inflow-NearDischargeMinimumThreshold, NearDischargeMinimumSmoothPar)`</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        As in the examples above, define a short simulation time period first:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy import pub</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.timetools import Timegrids, Timegrid</span>
+<span class="sd">        &gt;&gt;&gt; pub.timegrids = Timegrids(Timegrid(&#39;2001.03.30&#39;,</span>
+<span class="sd">        ...                                    &#39;2001.04.03&#39;,</span>
+<span class="sd">        ...                                    &#39;1d&#39;))</span>
+
+<span class="sd">        Prepare the dam model:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; derived.toy.update()</span>
+
+<span class="sd">        Define a minimum discharge value for a cross section immediately</span>
+<span class="sd">        downstream of 6 m³/s for the summer months and of 4 m³/s for the</span>
+<span class="sd">        winter months:</span>
+
+<span class="sd">        &gt;&gt;&gt; neardischargeminimumthreshold(_11_1_12=6.0, _03_31_12=6.0,</span>
+<span class="sd">        ...                               _04_1_12=4.0, _10_31_12=4.0)</span>
+
+<span class="sd">        Also define related tolerance values that are 1 m³/s in summer and</span>
+<span class="sd">        0 m³/s in winter:</span>
+
+<span class="sd">        &gt;&gt;&gt; neardischargeminimumtolerance(_11_1_12=0.0, _03_31_12=0.0,</span>
+<span class="sd">        ...                               _04_1_12=2.0, _10_31_12=2.0)</span>
+<span class="sd">        &gt;&gt;&gt; derived.neardischargeminimumsmoothpar1.update()</span>
+
+<span class="sd">        Prepare a test function that calculates the targeted water release</span>
+<span class="sd">        based on the parameter values defined above and for inflows into</span>
+<span class="sd">        the dam ranging from 0 m³/s to 10 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.testtools import UnitTest</span>
+<span class="sd">        &gt;&gt;&gt; test = UnitTest(model, model.calc_targetedrelease_v1,</span>
+<span class="sd">        ...                 last_example=21,</span>
+<span class="sd">        ...                 parseqs=(fluxes.inflow,</span>
+<span class="sd">        ...                          fluxes.targetedrelease))</span>
+<span class="sd">        &gt;&gt;&gt; test.nexts.inflow = numpy.arange(0.0, 10.5, .5)</span>
+
+<span class="sd">        Firstly, assume the required release of water for reducing droughts</span>
+<span class="sd">        has already been determined to be 10 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; fluxes.requiredrelease = 10.</span>
+
+<span class="sd">        On May 31, the tolerance value is 0 m³/s.  Hence the targeted</span>
+<span class="sd">        release jumps from the inflow value to the required release</span>
+<span class="sd">        when exceeding the threshold value of 6 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.03.31&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | inflow | targetedrelease |</span>
+<span class="sd">        ----------------------------------</span>
+<span class="sd">        |   1 |    0.0 |             0.0 |</span>
+<span class="sd">        |   2 |    0.5 |             0.5 |</span>
+<span class="sd">        |   3 |    1.0 |             1.0 |</span>
+<span class="sd">        |   4 |    1.5 |             1.5 |</span>
+<span class="sd">        |   5 |    2.0 |             2.0 |</span>
+<span class="sd">        |   6 |    2.5 |             2.5 |</span>
+<span class="sd">        |   7 |    3.0 |             3.0 |</span>
+<span class="sd">        |   8 |    3.5 |             3.5 |</span>
+<span class="sd">        |   9 |    4.0 |             4.0 |</span>
+<span class="sd">        |  10 |    4.5 |             4.5 |</span>
+<span class="sd">        |  11 |    5.0 |             5.0 |</span>
+<span class="sd">        |  12 |    5.5 |             5.5 |</span>
+<span class="sd">        |  13 |    6.0 |             8.0 |</span>
+<span class="sd">        |  14 |    6.5 |            10.0 |</span>
+<span class="sd">        |  15 |    7.0 |            10.0 |</span>
+<span class="sd">        |  16 |    7.5 |            10.0 |</span>
+<span class="sd">        |  17 |    8.0 |            10.0 |</span>
+<span class="sd">        |  18 |    8.5 |            10.0 |</span>
+<span class="sd">        |  19 |    9.0 |            10.0 |</span>
+<span class="sd">        |  20 |    9.5 |            10.0 |</span>
+<span class="sd">        |  21 |   10.0 |            10.0 |</span>
+
+<span class="sd">        On April 1, the threshold value is 4 m³/s and the tolerance value</span>
+<span class="sd">        is 2 m³/s.  Hence there is a smooth transition for inflows ranging</span>
+<span class="sd">        between 2 m³/s and 6 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.04.01&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | inflow | targetedrelease |</span>
+<span class="sd">        ----------------------------------</span>
+<span class="sd">        |   1 |    0.0 |         0.00102 |</span>
+<span class="sd">        |   2 |    0.5 |        0.503056 |</span>
+<span class="sd">        |   3 |    1.0 |        1.009127 |</span>
+<span class="sd">        |   4 |    1.5 |        1.527132 |</span>
+<span class="sd">        |   5 |    2.0 |            2.08 |</span>
+<span class="sd">        |   6 |    2.5 |        2.731586 |</span>
+<span class="sd">        |   7 |    3.0 |        3.639277 |</span>
+<span class="sd">        |   8 |    3.5 |        5.064628 |</span>
+<span class="sd">        |   9 |    4.0 |             7.0 |</span>
+<span class="sd">        |  10 |    4.5 |        8.676084 |</span>
+<span class="sd">        |  11 |    5.0 |        9.543374 |</span>
+<span class="sd">        |  12 |    5.5 |        9.861048 |</span>
+<span class="sd">        |  13 |    6.0 |            9.96 |</span>
+<span class="sd">        |  14 |    6.5 |        9.988828 |</span>
+<span class="sd">        |  15 |    7.0 |        9.996958 |</span>
+<span class="sd">        |  16 |    7.5 |        9.999196 |</span>
+<span class="sd">        |  17 |    8.0 |        9.999796 |</span>
+<span class="sd">        |  18 |    8.5 |        9.999951 |</span>
+<span class="sd">        |  19 |    9.0 |         9.99999 |</span>
+<span class="sd">        |  20 |    9.5 |        9.999998 |</span>
+<span class="sd">        |  21 |   10.0 |            10.0 |</span>
+
+
+<span class="sd">        An required release substantially below the threshold value is</span>
+<span class="sd">        a rather unlikely scenario, but is at least instructive regarding</span>
+<span class="sd">        the functioning of the method (when plotting the results</span>
+<span class="sd">        graphically...):</span>
+
+<span class="sd">        &gt;&gt;&gt; fluxes.requiredrelease = 2.</span>
+
+<span class="sd">        On May 31, the relationship between targeted release and inflow</span>
+<span class="sd">        is again highly discontinous:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.03.31&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | inflow | targetedrelease |</span>
+<span class="sd">        ----------------------------------</span>
+<span class="sd">        |   1 |    0.0 |             0.0 |</span>
+<span class="sd">        |   2 |    0.5 |             0.5 |</span>
+<span class="sd">        |   3 |    1.0 |             1.0 |</span>
+<span class="sd">        |   4 |    1.5 |             1.5 |</span>
+<span class="sd">        |   5 |    2.0 |             2.0 |</span>
+<span class="sd">        |   6 |    2.5 |             2.5 |</span>
+<span class="sd">        |   7 |    3.0 |             3.0 |</span>
+<span class="sd">        |   8 |    3.5 |             3.5 |</span>
+<span class="sd">        |   9 |    4.0 |             4.0 |</span>
+<span class="sd">        |  10 |    4.5 |             4.5 |</span>
+<span class="sd">        |  11 |    5.0 |             5.0 |</span>
+<span class="sd">        |  12 |    5.5 |             5.5 |</span>
+<span class="sd">        |  13 |    6.0 |             4.0 |</span>
+<span class="sd">        |  14 |    6.5 |             2.0 |</span>
+<span class="sd">        |  15 |    7.0 |             2.0 |</span>
+<span class="sd">        |  16 |    7.5 |             2.0 |</span>
+<span class="sd">        |  17 |    8.0 |             2.0 |</span>
+<span class="sd">        |  18 |    8.5 |             2.0 |</span>
+<span class="sd">        |  19 |    9.0 |             2.0 |</span>
+<span class="sd">        |  20 |    9.5 |             2.0 |</span>
+<span class="sd">        |  21 |   10.0 |             2.0 |</span>
+
+<span class="sd">        And on April 1, it is again absolutely smooth:</span>
+
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.04.01&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | inflow | targetedrelease |</span>
+<span class="sd">        ----------------------------------</span>
+<span class="sd">        |   1 |    0.0 |        0.000204 |</span>
+<span class="sd">        |   2 |    0.5 |        0.500483 |</span>
+<span class="sd">        |   3 |    1.0 |        1.001014 |</span>
+<span class="sd">        |   4 |    1.5 |        1.501596 |</span>
+<span class="sd">        |   5 |    2.0 |             2.0 |</span>
+<span class="sd">        |   6 |    2.5 |        2.484561 |</span>
+<span class="sd">        |   7 |    3.0 |        2.908675 |</span>
+<span class="sd">        |   8 |    3.5 |        3.138932 |</span>
+<span class="sd">        |   9 |    4.0 |             3.0 |</span>
+<span class="sd">        |  10 |    4.5 |         2.60178 |</span>
+<span class="sd">        |  11 |    5.0 |        2.273976 |</span>
+<span class="sd">        |  12 |    5.5 |        2.108074 |</span>
+<span class="sd">        |  13 |    6.0 |            2.04 |</span>
+<span class="sd">        |  14 |    6.5 |        2.014364 |</span>
+<span class="sd">        |  15 |    7.0 |        2.005071 |</span>
+<span class="sd">        |  16 |    7.5 |         2.00177 |</span>
+<span class="sd">        |  17 |    8.0 |        2.000612 |</span>
+<span class="sd">        |  18 |    8.5 |         2.00021 |</span>
+<span class="sd">        |  19 |    9.0 |        2.000072 |</span>
+<span class="sd">        |  20 |    9.5 |        2.000024 |</span>
+<span class="sd">        |  21 |   10.0 |        2.000008 |</span>
+
+<span class="sd">        For required releases equal with the threshold value, there is</span>
+<span class="sd">        generally no jump in the relationship.  But on May 31, there</span>
+<span class="sd">        remains a discontinuity in the first derivative:</span>
+
+<span class="sd">        &gt;&gt;&gt; fluxes.requiredrelease = 6.</span>
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.03.31&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | inflow | targetedrelease |</span>
+<span class="sd">        ----------------------------------</span>
+<span class="sd">        |   1 |    0.0 |             0.0 |</span>
+<span class="sd">        |   2 |    0.5 |             0.5 |</span>
+<span class="sd">        |   3 |    1.0 |             1.0 |</span>
+<span class="sd">        |   4 |    1.5 |             1.5 |</span>
+<span class="sd">        |   5 |    2.0 |             2.0 |</span>
+<span class="sd">        |   6 |    2.5 |             2.5 |</span>
+<span class="sd">        |   7 |    3.0 |             3.0 |</span>
+<span class="sd">        |   8 |    3.5 |             3.5 |</span>
+<span class="sd">        |   9 |    4.0 |             4.0 |</span>
+<span class="sd">        |  10 |    4.5 |             4.5 |</span>
+<span class="sd">        |  11 |    5.0 |             5.0 |</span>
+<span class="sd">        |  12 |    5.5 |             5.5 |</span>
+<span class="sd">        |  13 |    6.0 |             6.0 |</span>
+<span class="sd">        |  14 |    6.5 |             6.0 |</span>
+<span class="sd">        |  15 |    7.0 |             6.0 |</span>
+<span class="sd">        |  16 |    7.5 |             6.0 |</span>
+<span class="sd">        |  17 |    8.0 |             6.0 |</span>
+<span class="sd">        |  18 |    8.5 |             6.0 |</span>
+<span class="sd">        |  19 |    9.0 |             6.0 |</span>
+<span class="sd">        |  20 |    9.5 |             6.0 |</span>
+<span class="sd">        |  21 |   10.0 |             6.0 |</span>
+
+<span class="sd">        On April 1, this second order discontinuity is smoothed with</span>
+<span class="sd">        the help of a little hump around the threshold:</span>
+
+<span class="sd">        &gt;&gt;&gt; fluxes.requiredrelease = 4.</span>
+<span class="sd">        &gt;&gt;&gt; model.idx_sim = pub.timegrids.init[&#39;2001.04.01&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | inflow | targetedrelease |</span>
+<span class="sd">        ----------------------------------</span>
+<span class="sd">        |   1 |    0.0 |        0.000408 |</span>
+<span class="sd">        |   2 |    0.5 |        0.501126 |</span>
+<span class="sd">        |   3 |    1.0 |        1.003042 |</span>
+<span class="sd">        |   4 |    1.5 |         1.50798 |</span>
+<span class="sd">        |   5 |    2.0 |            2.02 |</span>
+<span class="sd">        |   6 |    2.5 |        2.546317 |</span>
+<span class="sd">        |   7 |    3.0 |        3.091325 |</span>
+<span class="sd">        |   8 |    3.5 |        3.620356 |</span>
+<span class="sd">        |   9 |    4.0 |             4.0 |</span>
+<span class="sd">        |  10 |    4.5 |        4.120356 |</span>
+<span class="sd">        |  11 |    5.0 |        4.091325 |</span>
+<span class="sd">        |  12 |    5.5 |        4.046317 |</span>
+<span class="sd">        |  13 |    6.0 |            4.02 |</span>
+<span class="sd">        |  14 |    6.5 |         4.00798 |</span>
+<span class="sd">        |  15 |    7.0 |        4.003042 |</span>
+<span class="sd">        |  16 |    7.5 |        4.001126 |</span>
+<span class="sd">        |  17 |    8.0 |        4.000408 |</span>
+<span class="sd">        |  18 |    8.5 |        4.000146 |</span>
+<span class="sd">        |  19 |    9.0 |        4.000051 |</span>
+<span class="sd">        |  20 |    9.5 |        4.000018 |</span>
+<span class="sd">        |  21 |   10.0 |        4.000006 |</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">der</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">derived</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">targetedrelease</span> <span class="o">=</span> <span class="n">smoothutils</span><span class="o">.</span><span class="n">smooth_logistic1</span><span class="p">(</span>
+            <span class="n">flu</span><span class="o">.</span><span class="n">inflow</span><span class="o">-</span><span class="n">con</span><span class="o">.</span><span class="n">neardischargeminimumthreshold</span><span class="p">[</span>
+                                                <span class="n">der</span><span class="o">.</span><span class="n">toy</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span><span class="p">]],</span>
+            <span class="n">der</span><span class="o">.</span><span class="n">neardischargeminimumsmoothpar1</span><span class="p">[</span><span class="n">der</span><span class="o">.</span><span class="n">toy</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span><span class="p">]])</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">targetedrelease</span> <span class="o">=</span> <span class="p">(</span><span class="n">flu</span><span class="o">.</span><span class="n">targetedrelease</span> <span class="o">*</span> <span class="n">flu</span><span class="o">.</span><span class="n">requiredrelease</span> <span class="o">+</span>
+                           <span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">flu</span><span class="o">.</span><span class="n">targetedrelease</span><span class="p">)</span> <span class="o">*</span> <span class="n">flu</span><span class="o">.</span><span class="n">inflow</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="calc_actualrelease_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.calc_actualrelease_v1">[docs]</a><span class="k">def</span> <span class="nf">calc_actualrelease_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the actual water release that can be supplied by the</span>
+<span class="sd">    dam considering the targeted release and the given water level.</span>
+
+<span class="sd">    Required control parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_control.WaterLevelMinimumThreshold`</span>
+
+<span class="sd">    Required derived parameters:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.WaterLevelMinimumSmoothPar`</span>
+
+<span class="sd">    Required flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.TargetedRelease`</span>
+
+<span class="sd">    Required aide sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_aides.WaterLevel`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.ActualRelease`</span>
+
+<span class="sd">    Basic equation:</span>
+<span class="sd">      :math:`ActualRelease = TargetedRelease \\cdot</span>
+<span class="sd">      smooth\_logistic1(WaterLevelMinimumThreshold-WaterLevel,</span>
+<span class="sd">      WaterLevelMinimumSmoothPar)`</span>
+
+<span class="sd">    Used auxiliary method:</span>
+<span class="sd">      :func:`~hydpy.cythons.smoothutils.smooth_logistic1`.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        Prepare the dam model:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+
+<span class="sd">        Assume the required release has previously been estimated</span>
+<span class="sd">        to be 2 m³/s:</span>
+
+<span class="sd">        &gt;&gt;&gt; fluxes.targetedrelease = 2.0</span>
+
+<span class="sd">        Prepare a test function, that calculates the targeted water release</span>
+<span class="sd">        for water levels ranging between -1 and 5 m:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.testtools import UnitTest</span>
+<span class="sd">        &gt;&gt;&gt; test = UnitTest(model, model.calc_actualrelease_v1,</span>
+<span class="sd">        ...                 last_example=7,</span>
+<span class="sd">        ...                 parseqs=(aides.waterlevel,</span>
+<span class="sd">        ...                          fluxes.actualrelease))</span>
+<span class="sd">        &gt;&gt;&gt; test.nexts.waterlevel = range(-1, 6)</span>
+
+<span class="sd">        Firstly, we define a sharp minimum water level of 0 m:</span>
+
+<span class="sd">        &gt;&gt;&gt; waterlevelminimumthreshold(0.)</span>
+<span class="sd">        &gt;&gt;&gt; waterlevelminimumtolerance(0.)</span>
+<span class="sd">        &gt;&gt;&gt; derived.waterlevelminimumsmoothpar.update()</span>
+
+<span class="sd">        The following test results show that the water releae is reduced</span>
+<span class="sd">        to 0 m³/s for water levels (even slightly) lower than 0 m and is</span>
+<span class="sd">        identical with the required value of 2 m³/s (even slighlty) above 0 m:</span>
+
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | waterlevel | actualrelease |</span>
+<span class="sd">        ------------------------------------</span>
+<span class="sd">        |   1 |       -1.0 |           0.0 |</span>
+<span class="sd">        |   2 |        0.0 |           1.0 |</span>
+<span class="sd">        |   3 |        1.0 |           2.0 |</span>
+<span class="sd">        |   4 |        2.0 |           2.0 |</span>
+<span class="sd">        |   5 |        3.0 |           2.0 |</span>
+<span class="sd">        |   6 |        4.0 |           2.0 |</span>
+<span class="sd">        |   7 |        5.0 |           2.0 |</span>
+
+
+<span class="sd">        One may have noted that in the above example the calculated water</span>
+<span class="sd">        release is 1 m³/s (which is exactly the half of the targeted release)</span>
+<span class="sd">        at a water level of 1 m.  This looks suspiciously lake a flaw but</span>
+<span class="sd">        is not of any importance considering the fact, that numerical</span>
+<span class="sd">        integration algorithms will approximate the analytical solution</span>
+<span class="sd">        of a complete emptying of a dam emtying (which is a water level</span>
+<span class="sd">        of 0 m), only with a certain accuracy.</span>
+
+<span class="sd">        Nonetheless, it can (besides some other possible advantages)</span>
+<span class="sd">        dramatically increase the speed of numerical integration algorithms</span>
+<span class="sd">        to define a smooth transition area instead of sharp threshold value,</span>
+<span class="sd">        like in the following example:</span>
+
+<span class="sd">        &gt;&gt;&gt; waterlevelminimumthreshold(4.)</span>
+<span class="sd">        &gt;&gt;&gt; waterlevelminimumtolerance(1.)</span>
+<span class="sd">        &gt;&gt;&gt; derived.waterlevelminimumsmoothpar.update()</span>
+
+<span class="sd">        Now, 98 % of the variation of the total range from 0 m³/s to 2 m³/s</span>
+<span class="sd">        occurs between a water level of 3 m and 5 m:</span>
+
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | waterlevel | actualrelease |</span>
+<span class="sd">        ------------------------------------</span>
+<span class="sd">        |   1 |       -1.0 |           0.0 |</span>
+<span class="sd">        |   2 |        0.0 |           0.0 |</span>
+<span class="sd">        |   3 |        1.0 |      0.000002 |</span>
+<span class="sd">        |   4 |        2.0 |      0.000204 |</span>
+<span class="sd">        |   5 |        3.0 |          0.02 |</span>
+<span class="sd">        |   6 |        4.0 |           1.0 |</span>
+<span class="sd">        |   7 |        5.0 |          1.98 |</span>
+
+<span class="sd">        Note that it is possible to set both parameters in a manner that</span>
+<span class="sd">        might result in negative water stages beyond numerical inaccuracy:</span>
+
+<span class="sd">        &gt;&gt;&gt; waterlevelminimumthreshold(1.)</span>
+<span class="sd">        &gt;&gt;&gt; waterlevelminimumtolerance(2.)</span>
+<span class="sd">        &gt;&gt;&gt; derived.waterlevelminimumsmoothpar.update()</span>
+
+<span class="sd">        Here, the actual water release is 0.18 m³/s for a water level</span>
+<span class="sd">        of 0 m.  Hence water stages in the range of 0 m to -1 m or</span>
+<span class="sd">        even -2 m might occur during the simulation of long drought events:</span>
+
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | waterlevel | actualrelease |</span>
+<span class="sd">        ------------------------------------</span>
+<span class="sd">        |   1 |       -1.0 |          0.02 |</span>
+<span class="sd">        |   2 |        0.0 |       0.18265 |</span>
+<span class="sd">        |   3 |        1.0 |           1.0 |</span>
+<span class="sd">        |   4 |        2.0 |       1.81735 |</span>
+<span class="sd">        |   5 |        3.0 |          1.98 |</span>
+<span class="sd">        |   6 |        4.0 |      1.997972 |</span>
+<span class="sd">        |   7 |        5.0 |      1.999796 |</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">der</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">derived</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">aid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">aides</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">actualrelease</span> <span class="o">=</span> <span class="p">(</span><span class="n">flu</span><span class="o">.</span><span class="n">targetedrelease</span> <span class="o">*</span>
+                         <span class="n">smoothutils</span><span class="o">.</span><span class="n">smooth_logistic1</span><span class="p">(</span>
+                                 <span class="n">aid</span><span class="o">.</span><span class="n">waterlevel</span><span class="o">-</span><span class="n">con</span><span class="o">.</span><span class="n">waterlevelminimumthreshold</span><span class="p">,</span>
+                                 <span class="n">der</span><span class="o">.</span><span class="n">waterlevelminimumsmoothpar</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="calc_flooddischarge_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.calc_flooddischarge_v1">[docs]</a><span class="k">def</span> <span class="nf">calc_flooddischarge_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the discharge during and after a flood event based on an</span>
+<span class="sd">    artificial neural network describing the relationship between discharge</span>
+<span class="sd">    and water stage.</span>
+
+<span class="sd">    Required control parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_control.WaterLevel2FloodDischarge`</span>
+
+<span class="sd">    Required aide sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_aides.WaterLevel`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.FloodDischarge`</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        Prepare a dam model:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+
+<span class="sd">        Prepare a relatively simple relationship based on two neuron</span>
+<span class="sd">        contained in a single hidden layer:</span>
+
+<span class="sd">        &gt;&gt;&gt; waterlevel2flooddischarge(nmb_inputs=1,</span>
+<span class="sd">        ...                           nmb_neurons=(2,),</span>
+<span class="sd">        ...                           nmb_outputs=1,</span>
+<span class="sd">        ...                           weights_input=[[50., 4]],</span>
+<span class="sd">        ...                           weights_output=[[2.], [30]],</span>
+<span class="sd">        ...                           intercepts_hidden=[[-13000, -1046]],</span>
+<span class="sd">        ...                           intercepts_output=[0.])</span>
+
+<span class="sd">        The following example shows two distinct effects of both neurons.</span>
+<span class="sd">        One neuron describes a relatively sharp increase between 259.8</span>
+<span class="sd">        and 260.2 meters from about 0 to 2 m³/s.  This could describe</span>
+<span class="sd">        a release of water through a bottom outlet controlled by a valve.</span>
+<span class="sd">        The add something like an exponential increase between 260 and</span>
+<span class="sd">        261 meters, which could describe the uncontrolled flow over a</span>
+<span class="sd">        spillway:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.testtools import UnitTest</span>
+<span class="sd">        &gt;&gt;&gt; test = UnitTest(model, model.calc_flooddischarge_v1,</span>
+<span class="sd">        ...                 last_example=21)</span>
+<span class="sd">        &gt;&gt;&gt; test.nexts.waterlevel = numpy.arange(257, 261.1, 0.2)</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | flooddischarge | waterlevel |</span>
+<span class="sd">        -------------------------------------</span>
+<span class="sd">        |   1 |            0.0 |      257.0 |</span>
+<span class="sd">        |   2 |       0.000001 |      257.2 |</span>
+<span class="sd">        |   3 |       0.000002 |      257.4 |</span>
+<span class="sd">        |   4 |       0.000005 |      257.6 |</span>
+<span class="sd">        |   5 |       0.000011 |      257.8 |</span>
+<span class="sd">        |   6 |       0.000025 |      258.0 |</span>
+<span class="sd">        |   7 |       0.000056 |      258.2 |</span>
+<span class="sd">        |   8 |       0.000124 |      258.4 |</span>
+<span class="sd">        |   9 |       0.000275 |      258.6 |</span>
+<span class="sd">        |  10 |       0.000612 |      258.8 |</span>
+<span class="sd">        |  11 |       0.001362 |      259.0 |</span>
+<span class="sd">        |  12 |       0.003031 |      259.2 |</span>
+<span class="sd">        |  13 |       0.006745 |      259.4 |</span>
+<span class="sd">        |  14 |       0.015006 |      259.6 |</span>
+<span class="sd">        |  15 |       0.033467 |      259.8 |</span>
+<span class="sd">        |  16 |       1.074179 |      260.0 |</span>
+<span class="sd">        |  17 |       2.164498 |      260.2 |</span>
+<span class="sd">        |  18 |       2.363853 |      260.4 |</span>
+<span class="sd">        |  19 |        2.79791 |      260.6 |</span>
+<span class="sd">        |  20 |       3.719725 |      260.8 |</span>
+<span class="sd">        |  21 |       5.576088 |      261.0 |</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">aid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">aides</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">con</span><span class="o">.</span><span class="n">waterlevel2flooddischarge</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">aid</span><span class="o">.</span><span class="n">waterlevel</span>
+    <span class="n">con</span><span class="o">.</span><span class="n">waterlevel2flooddischarge</span><span class="o">.</span><span class="n">process_actual_input</span><span class="p">()</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">flooddischarge</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">waterlevel2flooddischarge</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="calc_outflow_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.calc_outflow_v1">[docs]</a><span class="k">def</span> <span class="nf">calc_outflow_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the total outflow of the dam.</span>
+
+<span class="sd">    Note that the maximum function is used to prevent from negative outflow</span>
+<span class="sd">    values, which could otherwise occur within the required level of</span>
+<span class="sd">    numerical accuracy.</span>
+
+<span class="sd">    Required flux sequences:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.ActualRelease`</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.FloodDischarge`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.Outflow`</span>
+
+<span class="sd">    Basic equation:</span>
+<span class="sd">      :math:`Outflow = max(ActualRelease + FloodDischarge, 0.)`</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.actualrelease = 2.0</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.flooddischarge = 3.0</span>
+<span class="sd">        &gt;&gt;&gt; model.calc_outflow_v1()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.outflow</span>
+<span class="sd">        outflow(5.0)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.flooddischarge = -3.0</span>
+<span class="sd">        &gt;&gt;&gt; model.calc_outflow_v1()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.outflow</span>
+<span class="sd">        outflow(0.0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span><span class="o">.</span><span class="n">outflow</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">flu</span><span class="o">.</span><span class="n">actualrelease</span> <span class="o">+</span> <span class="n">flu</span><span class="o">.</span><span class="n">flooddischarge</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="update_watervolume_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.update_watervolume_v1">[docs]</a><span class="k">def</span> <span class="nf">update_watervolume_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Update the actual water volume.</span>
+
+<span class="sd">    Required derived parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.Seconds`</span>
+
+<span class="sd">    Required flux sequences:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.Inflow`</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.Outflow`</span>
+
+<span class="sd">    Updated state sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_states.WaterVolume`</span>
+
+<span class="sd">    Basic equation:</span>
+<span class="sd">      :math:`\\frac{d}{dt}WaterVolume = 1e-6 \\cdot (Inflow-Outflow)`</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; derived.seconds = 2e6</span>
+<span class="sd">        &gt;&gt;&gt; states.watervolume.old = 5.0</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.inflow = 2.0</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.outflow = 3.0</span>
+<span class="sd">        &gt;&gt;&gt; model.update_watervolume_v1()</span>
+<span class="sd">        &gt;&gt;&gt; states.watervolume</span>
+<span class="sd">        watervolume(3.0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">der</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">derived</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">fastaccess_old</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">fastaccess_new</span>
+    <span class="n">new</span><span class="o">.</span><span class="n">watervolume</span> <span class="o">=</span> <span class="p">(</span><span class="n">old</span><span class="o">.</span><span class="n">watervolume</span> <span class="o">+</span>
+                       <span class="n">der</span><span class="o">.</span><span class="n">seconds</span><span class="o">*</span><span class="p">(</span><span class="n">flu</span><span class="o">.</span><span class="n">inflow</span><span class="o">-</span><span class="n">flu</span><span class="o">.</span><span class="n">outflow</span><span class="p">)</span><span class="o">/</span><span class="mf">1e6</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pass_outflow_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.pass_outflow_v1">[docs]</a><span class="k">def</span> <span class="nf">pass_outflow_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Update the outlet link sequence.&quot;&quot;&quot;</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">outlets</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">flu</span><span class="o">.</span><span class="n">outflow</span></div>
+
+
+<div class="viewcode-block" id="update_loggedoutflow_v1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.update_loggedoutflow_v1">[docs]</a><span class="k">def</span> <span class="nf">update_loggedoutflow_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Log a new entry of discharge at a cross section far downstream.</span>
+
+<span class="sd">    Required control parameter:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_derived.NmbLogEntries`</span>
+
+<span class="sd">    Required flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_fluxes.Outflow`</span>
+
+<span class="sd">    Calculated flux sequence:</span>
+<span class="sd">      :class:`~hydpy.models.dam.dam_logs.LoggedOutflow`</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        The following example shows that, with each new method call, the</span>
+<span class="sd">        three memorized values are successively moved to the right and the</span>
+<span class="sd">        respective new value is stored on the bare left position:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; nmblogentries(3)</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.testtools import UnitTest</span>
+<span class="sd">        &gt;&gt;&gt; test = UnitTest(model, model.update_loggedoutflow_v1,</span>
+<span class="sd">        ...                 last_example=4)</span>
+<span class="sd">        &gt;&gt;&gt; test.nexts.outflow = [1., 3., 2., 4]</span>
+<span class="sd">        &gt;&gt;&gt; test()</span>
+<span class="sd">        | ex. | outflow |           loggedoutflow |</span>
+<span class="sd">        -------------------------------------------</span>
+<span class="sd">        |   1 |     1.0 | 1.0  nan            nan |</span>
+<span class="sd">        |   2 |     3.0 | 3.0  1.0            nan |</span>
+<span class="sd">        |   3 |     2.0 | 2.0  3.0            1.0 |</span>
+<span class="sd">        |   4 |     4.0 | 4.0  2.0            3.0 |</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">flu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">logs</span><span class="o">.</span><span class="n">fastaccess</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">con</span><span class="o">.</span><span class="n">nmblogentries</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">loggedoutflow</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">loggedoutflow</span><span class="p">[</span><span class="n">idx</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">loggedoutflow</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">flu</span><span class="o">.</span><span class="n">outflow</span></div>
+
+
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_model.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">modeltools</span><span class="o">.</span><span class="n">ModelELS</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dam base model.&quot;&quot;&quot;</span>
+
+    <span class="n">_INLET_METHODS</span> <span class="o">=</span> <span class="p">(</span><span class="n">pic_inflow_v1</span><span class="p">,</span>
+                      <span class="n">calc_naturalremotedischarge_v1</span><span class="p">,</span>
+                      <span class="n">calc_remotedemand_v1</span><span class="p">,</span>
+                      <span class="n">calc_remotefailure_v1</span><span class="p">,</span>
+                      <span class="n">calc_requiredremoterelease_v1</span><span class="p">,</span>
+                      <span class="n">calc_requiredrelease_v1</span><span class="p">,</span>
+                      <span class="n">calc_targetedrelease_v1</span><span class="p">)</span>
+    <span class="n">_RECEIVER_METHODS</span> <span class="o">=</span> <span class="p">(</span><span class="n">pic_totalremotedischarge_v1</span><span class="p">,</span>
+                         <span class="n">update_loggedtotalremotedischarge_v1</span><span class="p">)</span>
+    <span class="n">_PART_ODE_METHODS</span> <span class="o">=</span> <span class="p">(</span><span class="n">pic_inflow_v1</span><span class="p">,</span>
+                         <span class="n">calc_waterlevel_v1</span><span class="p">,</span>
+                         <span class="n">calc_actualrelease_v1</span><span class="p">,</span>
+                         <span class="n">calc_flooddischarge_v1</span><span class="p">,</span>
+                         <span class="n">calc_outflow_v1</span><span class="p">)</span>
+    <span class="n">_FULL_ODE_METHODS</span> <span class="o">=</span> <span class="p">(</span><span class="n">update_watervolume_v1</span><span class="p">,)</span>
+    <span class="n">_OUTLET_METHODS</span> <span class="o">=</span> <span class="p">(</span><span class="n">pass_outflow_v1</span><span class="p">,</span>
+                       <span class="n">update_loggedoutflow_v1</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

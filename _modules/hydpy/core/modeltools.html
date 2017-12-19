@@ -1,0 +1,889 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>hydpy.core.modeltools &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for hydpy.core.modeltools</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This module implements tools for the development of hydrological models.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># import...</span>
+<span class="c1"># ...from standard library</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="c1"># ...from site-packages</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="c1"># ...from HydPy</span>
+<span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">pub</span>
+<span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">conf</span>
+<span class="kn">from</span> <span class="nn">hydpy.core</span> <span class="k">import</span> <span class="n">objecttools</span>
+<span class="kn">from</span> <span class="nn">hydpy.core</span> <span class="k">import</span> <span class="n">autodoctools</span>
+<span class="kn">from</span> <span class="nn">hydpy.cythons</span> <span class="k">import</span> <span class="n">modelutils</span>
+
+
+<div class="viewcode-block" id="MetaModel"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.MetaModel">[docs]</a><span class="k">class</span> <span class="nc">MetaModel</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">,</span> <span class="n">cls_parents</span><span class="p">,</span> <span class="n">dict_</span><span class="p">):</span>
+        <span class="n">_METHOD_GROUPS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_RUN_METHODS&#39;</span><span class="p">,</span> <span class="s1">&#39;_ADD_METHODS&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;_INLET_METHODS&#39;</span><span class="p">,</span> <span class="s1">&#39;_OUTLET_METHODS&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;_RECEIVER_METHODS&#39;</span><span class="p">,</span> <span class="s1">&#39;_SENDER_METHODS&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;_PART_ODE_METHODS&#39;</span><span class="p">,</span> <span class="s1">&#39;_FULL_ODE_METHODS&#39;</span><span class="p">)</span>
+        <span class="n">dict_</span><span class="p">[</span><span class="s1">&#39;_METHOD_GROUPS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_METHOD_GROUPS</span>
+        <span class="k">for</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="n">_METHOD_GROUPS</span><span class="p">:</span>
+            <span class="n">methods</span> <span class="o">=</span> <span class="n">dict_</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">method_name</span><span class="p">,</span> <span class="p">())</span>
+            <span class="k">if</span> <span class="n">methods</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">method_name</span> <span class="o">==</span> <span class="s1">&#39;_RUN_METHODS&#39;</span><span class="p">:</span>
+                    <span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">    The following &quot;run methods&quot; are called &#39;</span>
+                           <span class="s1">&#39;each simulation step run in the given sequence:&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">method_name</span> <span class="o">==</span> <span class="s1">&#39;_ADD_METHODS&#39;</span><span class="p">:</span>
+                    <span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">    The following &quot;additional methods&quot; are &#39;</span>
+                           <span class="s1">&#39;called by at least one &quot;run method&quot;:&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">method_name</span> <span class="o">==</span> <span class="s1">&#39;_INLET_METHODS&#39;</span><span class="p">:</span>
+                    <span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">    The following &quot;inlet update methods&quot; &#39;</span>
+                           <span class="s1">&#39;are called in the given sequence immediately  &#39;</span>
+                           <span class="s1">&#39;before solving the differential equations &#39;</span>
+                           <span class="s1">&#39;of the respective model:&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">method_name</span> <span class="o">==</span> <span class="s1">&#39;_OUTLET_METHODS&#39;</span><span class="p">:</span>
+                    <span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">    The following &quot;outlet update methods&quot; &#39;</span>
+                           <span class="s1">&#39;are called in the given sequence immediately  &#39;</span>
+                           <span class="s1">&#39;after solving the differential equations &#39;</span>
+                           <span class="s1">&#39;of the respective model:&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">method_name</span> <span class="o">==</span> <span class="s1">&#39;_RECEIVER_METHODS&#39;</span><span class="p">:</span>
+                    <span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">    The following &quot;receiver update methods&quot; &#39;</span>
+                           <span class="s1">&#39;are called in the given sequence before solving &#39;</span>
+                           <span class="s1">&#39;the differential equations of any model:&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">method_name</span> <span class="o">==</span> <span class="s1">&#39;_SENDER_METHODS&#39;</span><span class="p">:</span>
+                    <span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">    The following &quot;sender update methods&quot; &#39;</span>
+                           <span class="s1">&#39;are called in the given sequence after solving &#39;</span>
+                           <span class="s1">&#39;the differential equations of all models:&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">method_name</span> <span class="o">==</span> <span class="s1">&#39;_PART_ODE_METHODS&#39;</span><span class="p">:</span>
+                    <span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">    The following methods define the &#39;</span>
+                           <span class="s1">&#39;relevant components of a system of ODE &#39;</span>
+                           <span class="s1">&#39;equations (e.g. direct runoff):&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">method_name</span> <span class="o">==</span> <span class="s1">&#39;_FULL_ODE_METHODS&#39;</span><span class="p">:</span>
+                    <span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1">    The following methods define the &#39;</span>
+                           <span class="s1">&#39;complete equations of an ODE system &#39;</span>
+                           <span class="s1">&#39;(e.g. change in storage of `fast water` due to &#39;</span>
+                           <span class="s1">&#39; effective precipitation and direct runoff):&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+                    <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;      * :func:`~</span><span class="si">%s</span><span class="s1">` `</span><span class="si">%s</span><span class="s1">`&#39;</span>
+                               <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">method</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+                                            <span class="n">method</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)),</span>
+                                  <span class="n">autodoctools</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="n">method</span><span class="p">)))</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="n">dict_</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;Undocumented model.&#39;</span><span class="p">)</span>
+                <span class="n">dict_</span><span class="p">[</span><span class="s1">&#39;__doc__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">type</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">,</span> <span class="n">cls_parents</span><span class="p">,</span> <span class="n">dict_</span><span class="p">)</span></div>
+
+
+<span class="n">_MetaModel</span> <span class="o">=</span> <span class="n">MetaModel</span><span class="p">(</span><span class="s1">&#39;MetaModel&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{})</span>
+
+
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">_MetaModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for all hydrological models.&quot;&quot;&quot;</span>
+
+    <span class="n">NUMERICAL</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">_RUN_METHODS</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">_ADD_METHODS</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">_INLET_METHODS</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">_OUTLET_METHODS</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">_RECEIVER_METHODS</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">_SENDER_METHODS</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">_PART_ODE_METHODS</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">_FULL_ODE_METHODS</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">element</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cymodel</span> <span class="o">=</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">FastAccess</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cymodel</span><span class="o">.</span><span class="n">idx_sim</span> <span class="o">=</span> <span class="o">-</span><span class="mi">999</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_methods</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_init_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert all pure Python calculation functions of the model class to</span>
+<span class="sd">        methods and assign them to the model instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name_group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_METHOD_GROUPS</span><span class="p">:</span>
+            <span class="n">functions</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_group</span><span class="p">,</span> <span class="p">())</span>
+            <span class="n">uniques</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">functions</span><span class="p">:</span>
+                <span class="n">name_func</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="n">method</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_func</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+                <span class="n">shortname</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name_func</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">shortname</span> <span class="ow">in</span> <span class="n">uniques</span><span class="p">:</span>
+                    <span class="n">uniques</span><span class="p">[</span><span class="n">shortname</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">uniques</span><span class="p">[</span><span class="n">shortname</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">shortname</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span> <span class="ow">in</span> <span class="n">uniques</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shortname</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Model.connect"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Connect the link sequences of the actual model.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;inlets&#39;</span><span class="p">,</span> <span class="s1">&#39;receivers&#39;</span><span class="p">,</span> <span class="s1">&#39;outlets&#39;</span><span class="p">,</span> <span class="s1">&#39;senders&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_connect_subgroup</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="n">objecttools</span><span class="o">.</span><span class="n">augmentexcmessage</span><span class="p">(</span>
+                <span class="s1">&#39;While trying to build the node connection of the `</span><span class="si">%s</span><span class="s1">` &#39;</span>
+                <span class="s1">&#39;sequences of the model handled by element `</span><span class="si">%s</span><span class="s1">`&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">group</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>  <span class="n">objecttools</span><span class="o">.</span><span class="n">devicename</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span></div>
+
+    <span class="k">def</span> <span class="nf">_connect_subgroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="n">isentry</span> <span class="o">=</span> <span class="n">group</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;inlets&#39;</span><span class="p">,</span> <span class="s1">&#39;receivers&#39;</span><span class="p">)</span>
+        <span class="n">available_nodes</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">slaves</span>
+        <span class="n">links</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="p">())</span>
+        <span class="n">applied_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">seq</span><span class="p">)</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+            <span class="n">selected_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">available_nodes</span>
+                              <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">isentry</span><span class="p">:</span>
+                <span class="n">selected_doubles</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">get_double_via_exits</span><span class="p">()</span>
+                                    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">selected_nodes</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">selected_doubles</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">get_double_via_entries</span><span class="p">()</span>
+                                    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">selected_nodes</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">seq</span><span class="o">.</span><span class="n">NDIM</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">applied_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selected_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">seq</span><span class="o">.</span><span class="n">setpointer</span><span class="p">(</span><span class="n">selected_doubles</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Sequence `</span><span class="si">%s</span><span class="s1">` cannot be connected, &#39;</span>
+                                       <span class="s1">&#39;as no node is available which is &#39;</span>
+                                       <span class="s1">&#39;handling the variable `</span><span class="si">%s</span><span class="s1">`.&#39;</span>
+                                       <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">seq</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Sequence `</span><span class="si">%s</span><span class="s1">` cannot be connected, &#39;</span>
+                                       <span class="s1">&#39;as it is 0-dimensional but multiple &#39;</span>
+                                       <span class="s1">&#39;nodes are available which are &#39;</span>
+                                       <span class="s1">&#39;handling variable `</span><span class="si">%s</span><span class="s1">`.&#39;</span>
+                                       <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">seq</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()))</span>
+            <span class="k">elif</span> <span class="n">seq</span><span class="o">.</span><span class="n">NDIM</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">seq</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_nodes</span><span class="p">)</span>
+                <span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">selected_nodes</span><span class="p">,</span> <span class="n">selected_doubles</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">double</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">zipped</span><span class="p">):</span>
+                    <span class="n">applied_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                    <span class="n">seq</span><span class="o">.</span><span class="n">setpointer</span><span class="p">(</span><span class="n">double</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">applied_nodes</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_nodes</span><span class="p">):</span>
+            <span class="n">remaining_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">available_nodes</span>
+                               <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">applied_nodes</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;The following nodes have not been connected &#39;</span>
+                               <span class="s1">&#39;to any sequences: `</span><span class="si">%s</span><span class="s1">`.&#39;</span>
+                               <span class="o">%</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">remaining_nodes</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Model.doit"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model.doit">[docs]</a>    <span class="k">def</span> <span class="nf">doit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loaddata</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_inlets</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new2old</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_outlets</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">savedata</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Model.run"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_RUN_METHODS</span><span class="p">:</span>
+            <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.loaddata"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model.loaddata">[docs]</a>    <span class="k">def</span> <span class="nf">loaddata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">loaddata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.savedata"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model.savedata">[docs]</a>    <span class="k">def</span> <span class="nf">savedata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">savedata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.update_inlets"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model.update_inlets">[docs]</a>    <span class="k">def</span> <span class="nf">update_inlets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_INLET_METHODS</span><span class="p">:</span>
+            <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.update_outlets"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model.update_outlets">[docs]</a>    <span class="k">def</span> <span class="nf">update_outlets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_OUTLET_METHODS</span><span class="p">:</span>
+            <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.update_receivers"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model.update_receivers">[docs]</a>    <span class="k">def</span> <span class="nf">update_receivers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_RECEIVER_METHODS</span><span class="p">:</span>
+            <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.update_senders"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model.update_senders">[docs]</a>    <span class="k">def</span> <span class="nf">update_senders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SENDER_METHODS</span><span class="p">:</span>
+            <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.new2old"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.Model.new2old">[docs]</a>    <span class="k">def</span> <span class="nf">new2old</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assign the new/final state values of the actual time step to the</span>
+<span class="sd">        new/initial state values of the next time step.  Needs to be</span>
+<span class="sd">        overwritten in Cython mode.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">new2old</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+    <span class="k">def</span> <span class="nf">_getidx_sim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Index of the actual simulation time step.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cymodel</span><span class="o">.</span><span class="n">idx_sim</span>
+
+    <span class="k">def</span> <span class="nf">_setidx_sim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cymodel</span><span class="o">.</span><span class="n">idx_sim</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">idx_sim</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_getidx_sim</span><span class="p">,</span> <span class="n">_setidx_sim</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">dir_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NumPars"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.NumPars">[docs]</a><span class="k">class</span> <span class="nc">NumPars</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NumConstsELS"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.NumConstsELS">[docs]</a><span class="k">class</span> <span class="nc">NumConstsELS</span><span class="p">(</span><span class="n">NumPars</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nmb_methods</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nmb_stages</span> <span class="o">=</span> <span class="mi">11</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt_increase</span> <span class="o">=</span> <span class="mf">2.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt_decrease</span> <span class="o">=</span> <span class="mf">10.</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="s1">&#39;a_coefficients_explicit_lobatto_sequence.npy&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a_coefs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NumVarsELS"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.NumVarsELS">[docs]</a><span class="k">class</span> <span class="nc">NumVarsELS</span><span class="p">(</span><span class="n">NumPars</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t0</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t1</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt_est</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_method</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_stage</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extrapolated_error</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f0_ready</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="ModelELS"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS">[docs]</a><span class="k">class</span> <span class="nc">ModelELS</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">NUMERICAL</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ModelELS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numconsts</span> <span class="o">=</span> <span class="n">NumConstsELS</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span> <span class="o">=</span> <span class="n">NumVarsELS</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ModelELS.doit"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.doit">[docs]</a>    <span class="k">def</span> <span class="nf">doit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_sim</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loaddata</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_inlets</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_outlets</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">savedata</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ModelELS.solve"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; k(0.0)</span>
+<span class="sd">        &gt;&gt;&gt; solver.abserrormax = 1e-2</span>
+<span class="sd">        &gt;&gt;&gt; solver.reldtmin = 1e-4</span>
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method</span>
+<span class="sd">        2</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.dt</span>
+<span class="sd">        1.0</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        2</span>
+
+<span class="sd">        &gt;&gt;&gt; k(0.1)</span>
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(0.905)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.095)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method</span>
+<span class="sd">        2</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        2</span>
+
+<span class="sd">        &gt;&gt;&gt; import numpy</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">        &gt;&gt;&gt; round_(numpy.exp(-k))</span>
+<span class="sd">        0.904837</span>
+
+<span class="sd">        &gt;&gt;&gt; solver.abserrormax = 1e-3</span>
+
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(0.904833)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.095167)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method</span>
+<span class="sd">        3</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        4</span>
+
+<span class="sd">        &gt;&gt;&gt; solver.abserrormax = 1e-4</span>
+
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(0.904837)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.095163)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method</span>
+<span class="sd">        4</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        7</span>
+
+<span class="sd">        &gt;&gt;&gt; solver.abserrormax = 1e-12</span>
+
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(0.904837)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.095163)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method</span>
+<span class="sd">        8</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        29</span>
+
+<span class="sd">        &gt;&gt;&gt; solver.abserrormax = 1e-2</span>
+
+<span class="sd">        &gt;&gt;&gt; k(0.5)</span>
+
+<span class="sd">        &gt;&gt;&gt; round_(numpy.exp(-k))</span>
+<span class="sd">        0.606531</span>
+
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(0.606771)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.393229)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method</span>
+<span class="sd">        4</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        7</span>
+
+<span class="sd">        &gt;&gt;&gt; k(2.0)</span>
+
+<span class="sd">        &gt;&gt;&gt; round_(numpy.exp(-k))</span>
+<span class="sd">        0.135335</span>
+
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(0.134658)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.865342)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        22</span>
+
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(0.018929)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.115728)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        13</span>
+
+<span class="sd">        &gt;&gt;&gt; k(4.0)</span>
+
+<span class="sd">        &gt;&gt;&gt; round_(numpy.exp(-k))</span>
+<span class="sd">        0.018316</span>
+
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(0.019774)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.980226)</span>
+<span class="sd">        &gt;&gt;&gt; round_(model.numvars.dt)</span>
+<span class="sd">        0.3</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        44</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.magictools import reverse_model_wildcard_import</span>
+<span class="sd">        &gt;&gt;&gt; reverse_model_wildcard_import()</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v2 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; k(0.5)</span>
+<span class="sd">        &gt;&gt;&gt; solver.abserrormax = 1e-2</span>
+<span class="sd">        &gt;&gt;&gt; solver.reldtmin = 1e-4</span>
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(0.5)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.5)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method</span>
+<span class="sd">        2</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.dt</span>
+<span class="sd">        1.0</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        2</span>
+
+<span class="sd">        &gt;&gt;&gt; k(2.0)</span>
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(-0.006827)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(1.006827)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        58</span>
+
+<span class="sd">        &gt;&gt;&gt; k(2.1)</span>
+<span class="sd">        &gt;&gt;&gt; states.s(1.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls = 0</span>
+<span class="sd">        &gt;&gt;&gt; model.solve()</span>
+<span class="sd">        &gt;&gt;&gt; states.s</span>
+<span class="sd">        s(-0.00072)</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(1.00072)</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.nmb_calls</span>
+<span class="sd">        50</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">t1</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt_est</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">f0_ready</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_sum_fluxes</span><span class="p">()</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">t1</span><span class="o">-</span><span class="mf">1e-14</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="mf">999999.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">t1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span>
+                    <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt_est</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">reldtmin</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">f0_ready</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calculate_single_terms</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_point_fluxes</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_point_states</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_result_states</span><span class="p">()</span>
+            <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+                                        <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numconsts</span><span class="o">.</span><span class="n">nmb_methods</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+                                            <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_point_states</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">calculate_single_terms</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_point_fluxes</span><span class="p">()</span>
+                <span class="k">for</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+                                            <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">integrate_fluxes</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">calculate_full_terms</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_point_states</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_result_fluxes</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_result_states</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calculate_error</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">extrapolate_error</span><span class="p">()</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">error</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">abserrormax</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt_est</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numconsts</span><span class="o">.</span><span class="n">dt_increase</span> <span class="o">*</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">f0_ready</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">addup_fluxes</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">t0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">t0</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">new2old</span><span class="p">()</span>
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">extrapolated_error</span> <span class="o">&gt;</span>
+                       <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">abserrormax</span><span class="p">)</span> <span class="ow">and</span>
+                      <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">reldtmin</span><span class="p">)):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">f0_ready</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt_est</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span> <span class="o">/</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">numconsts</span><span class="o">.</span><span class="n">dt_decrease</span><span class="p">)</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">error</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">f0_ready</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">reldtmin</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">f0_ready</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">addup_fluxes</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">t0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">t0</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">new2old</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">f0_ready</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt_est</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span> <span class="o">/</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">numconsts</span><span class="o">.</span><span class="n">dt_decrease</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_sum_fluxes</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ModelELS.calculate_single_terms"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.calculate_single_terms">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_single_terms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply all methods stored in :attr:`_PART_ODE_METHODS`.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; k(0.25)</span>
+<span class="sd">        &gt;&gt;&gt; states.s = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; model.calculate_single_terms()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(0.25)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span><span class="o">+</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PART_ODE_METHODS</span><span class="p">:</span>
+            <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelELS.calculate_full_terms"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.calculate_full_terms">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_full_terms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; k(0.25)</span>
+<span class="sd">        &gt;&gt;&gt; states.s.old = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q = 0.25</span>
+<span class="sd">        &gt;&gt;&gt; model.calculate_full_terms()</span>
+<span class="sd">        &gt;&gt;&gt; states.s.old</span>
+<span class="sd">        1.0</span>
+<span class="sd">        &gt;&gt;&gt; states.s.new</span>
+<span class="sd">        0.75</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_FULL_ODE_METHODS</span><span class="p">:</span>
+            <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelELS.get_point_states"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.get_point_states">[docs]</a>    <span class="k">def</span> <span class="nf">get_point_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the states corresponding to the actual stage.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; states.s.old = 2.0</span>
+<span class="sd">        &gt;&gt;&gt; states.s.new = 2.0</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_stage = 2</span>
+<span class="sd">        &gt;&gt;&gt; points = numpy.asarray(states.fastaccess._s_points)</span>
+<span class="sd">        &gt;&gt;&gt; points[:4] = 0.0, 0.0, 1.0, 0.0</span>
+<span class="sd">        &gt;&gt;&gt; model.get_point_states()</span>
+<span class="sd">        &gt;&gt;&gt; states.s.old</span>
+<span class="sd">        2.0</span>
+<span class="sd">        &gt;&gt;&gt; states.s.new</span>
+<span class="sd">        1.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_states</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span><span class="p">,</span> <span class="s1">&#39;points&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">type_</span><span class="p">):</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">states</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="p">))</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">new</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ModelELS.set_point_states"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.set_point_states">[docs]</a>    <span class="k">def</span> <span class="nf">set_point_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the states corresponding to the actual stage.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; states.s.old = 2.0</span>
+<span class="sd">        &gt;&gt;&gt; states.s.new = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_stage = 2</span>
+<span class="sd">        &gt;&gt;&gt; points = numpy.asarray(states.fastaccess._s_points)</span>
+<span class="sd">        &gt;&gt;&gt; points[:] = 0.</span>
+<span class="sd">        &gt;&gt;&gt; model.set_point_states()</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">        &gt;&gt;&gt; round_(points[:4])</span>
+<span class="sd">        0.0, 0.0, 1.0, 0.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_states</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span><span class="p">,</span> <span class="s1">&#39;points&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelELS.set_result_states"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.set_result_states">[docs]</a>    <span class="k">def</span> <span class="nf">set_result_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the final states of the actual method.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; states.s.old = 2.0</span>
+<span class="sd">        &gt;&gt;&gt; states.s.new = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method = 2</span>
+<span class="sd">        &gt;&gt;&gt; results = numpy.asarray(states.fastaccess._s_results)</span>
+<span class="sd">        &gt;&gt;&gt; results[:] = 0.0</span>
+<span class="sd">        &gt;&gt;&gt; model.set_result_states()</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">        &gt;&gt;&gt; round_(results[:4])</span>
+<span class="sd">        0.0, 0.0, 1.0, 0.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_states</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_set_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">type_</span><span class="p">):</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">states</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="p">))</span>
+            <span class="n">temp</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">new</span>
+
+<div class="viewcode-block" id="ModelELS.get_sum_fluxes"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.get_sum_fluxes">[docs]</a>    <span class="k">def</span> <span class="nf">get_sum_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the sum of the fluxes calculated so far.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q = 0.0</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.fastaccess._q_sum = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; model.get_sum_fluxes()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(1.0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fluxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">flux</span><span class="p">)</span> <span class="ow">in</span> <span class="n">fluxes</span><span class="o">.</span><span class="n">numerics</span><span class="p">:</span>
+            <span class="n">flux</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">_sum&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="ModelELS.set_point_fluxes"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.set_point_fluxes">[docs]</a>    <span class="k">def</span> <span class="nf">set_point_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the fluxes corresponding to the actual stage.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q = 1.</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_stage = 2</span>
+<span class="sd">        &gt;&gt;&gt; points = numpy.asarray(fluxes.fastaccess._q_points)</span>
+<span class="sd">        &gt;&gt;&gt; points[:] = 0.</span>
+<span class="sd">        &gt;&gt;&gt; model.set_point_fluxes()</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">        &gt;&gt;&gt; round_(points[:4])</span>
+<span class="sd">        0.0, 0.0, 1.0, 0.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span><span class="p">,</span> <span class="s1">&#39;points&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelELS.set_result_fluxes"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.set_result_fluxes">[docs]</a>    <span class="k">def</span> <span class="nf">set_result_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the final fluxes of the actual method.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q = 1.</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method = 2</span>
+<span class="sd">        &gt;&gt;&gt; results = numpy.asarray(fluxes.fastaccess._q_results)</span>
+<span class="sd">        &gt;&gt;&gt; results[:] = 0.</span>
+<span class="sd">        &gt;&gt;&gt; model.set_result_fluxes()</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">        &gt;&gt;&gt; round_(results[:4])</span>
+<span class="sd">        0.0, 0.0, 1.0, 0.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_set_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">type_</span><span class="p">):</span>
+        <span class="n">fluxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">flux</span><span class="p">)</span> <span class="ow">in</span> <span class="n">fluxes</span><span class="o">.</span><span class="n">numerics</span><span class="p">:</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="p">))</span>
+            <span class="n">temp</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">flux</span>
+
+<div class="viewcode-block" id="ModelELS.integrate_fluxes"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.integrate_fluxes">[docs]</a>    <span class="k">def</span> <span class="nf">integrate_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform a dot multiplication between the fluxes and the</span>
+<span class="sd">        A coefficients associated with the different stages of the</span>
+<span class="sd">        actual method.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method = 2</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_stage = 1</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.dt = 0.5</span>
+<span class="sd">        &gt;&gt;&gt; points = numpy.asarray(fluxes.fastaccess._q_points)</span>
+<span class="sd">        &gt;&gt;&gt; points[:4] = 15., 2., -999., 0.</span>
+<span class="sd">        &gt;&gt;&gt; model.integrate_fluxes()</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy import pub</span>
+<span class="sd">        &gt;&gt;&gt; round_(numpy.asarray(model.numconsts.a_coefs)[1, 1, :2])</span>
+<span class="sd">        0.375, 0.125</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q</span>
+<span class="sd">        q(2.9375)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fluxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">flux</span><span class="p">)</span> <span class="ow">in</span> <span class="n">fluxes</span><span class="o">.</span><span class="n">numerics</span><span class="p">:</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">_points&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">coefs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numconsts</span><span class="o">.</span><span class="n">a_coefs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span><span class="p">,</span>
+                                           <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span><span class="p">]</span>
+            <span class="n">flux</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span> <span class="o">*</span>
+                 <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">coefs</span><span class="p">,</span> <span class="n">points</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="ModelELS.reset_sum_fluxes"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.reset_sum_fluxes">[docs]</a>    <span class="k">def</span> <span class="nf">reset_sum_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the sum of the fluxes calculated so far to zero.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.fastaccess._q_sum = 5.</span>
+<span class="sd">        &gt;&gt;&gt; model.reset_sum_fluxes()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.fastaccess._q_sum</span>
+<span class="sd">        0.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fluxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">flux</span><span class="p">)</span> <span class="ow">in</span> <span class="n">fluxes</span><span class="o">.</span><span class="n">numerics</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">flux</span><span class="o">.</span><span class="n">NDIM</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">_sum&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">_sum&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)[:]</span> <span class="o">=</span> <span class="mf">0.</span></div>
+
+<div class="viewcode-block" id="ModelELS.addup_fluxes"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.addup_fluxes">[docs]</a>    <span class="k">def</span> <span class="nf">addup_fluxes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add up the sum of the fluxes calculated so far.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.fastaccess._q_sum = 1.0</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.q(2.0)</span>
+<span class="sd">        &gt;&gt;&gt; model.addup_fluxes()</span>
+<span class="sd">        &gt;&gt;&gt; fluxes.fastaccess._q_sum</span>
+<span class="sd">        3.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fluxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">flux</span><span class="p">)</span> <span class="ow">in</span> <span class="n">fluxes</span><span class="o">.</span><span class="n">numerics</span><span class="p">:</span>
+            <span class="n">sum_</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">_sum&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">sum_</span> <span class="o">+=</span> <span class="n">flux</span>
+            <span class="k">if</span> <span class="n">flux</span><span class="o">.</span><span class="n">NDIM</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">_sum&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">sum_</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelELS.calculate_error"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.calculate_error">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Estimate the numerical error based on the fluxes calculated</span>
+<span class="sd">        by the current and the last method.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method = 2</span>
+<span class="sd">        &gt;&gt;&gt; results = numpy.asarray(fluxes.fastaccess._q_results)</span>
+<span class="sd">        &gt;&gt;&gt; results[:4] = 0., 3., 4., 0.</span>
+<span class="sd">        &gt;&gt;&gt; model.calculate_error()</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">        &gt;&gt;&gt; round_(model.numvars.error)</span>
+<span class="sd">        1.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">fluxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span><span class="o">.</span><span class="n">fluxes</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">flux</span><span class="p">)</span> <span class="ow">in</span> <span class="n">fluxes</span><span class="o">.</span><span class="n">numerics</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">_results&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span><span class="p">]</span> <span class="o">-</span>
+                    <span class="n">results</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">error</span><span class="p">,</span>
+                                     <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diff</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="ModelELS.extrapolate_error"><a class="viewcode-back" href="../../../modeltools.html#hydpy.core.modeltools.ModelELS.extrapolate_error">[docs]</a>    <span class="k">def</span> <span class="nf">extrapolate_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Estimate the numerical error to be expected when applying all</span>
+<span class="sd">        methods available based on the results of the current and the</span>
+<span class="sd">        last method.</span>
+
+<span class="sd">        Note that this expolation strategy cannot be applied on the first</span>
+<span class="sd">        method.  If the current method is the first one, `-999.9` is returned.</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.models.test_v1 import *</span>
+<span class="sd">        &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.error = 1e-2</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.last_error = 1e-1</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method = 10</span>
+<span class="sd">        &gt;&gt;&gt; model.extrapolate_error()</span>
+<span class="sd">        &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">        &gt;&gt;&gt; round_(model.numvars.extrapolated_error)</span>
+<span class="sd">        0.01</span>
+<span class="sd">        &gt;&gt;&gt; model.numvars.idx_method = 9</span>
+<span class="sd">        &gt;&gt;&gt; model.extrapolate_error()</span>
+<span class="sd">        &gt;&gt;&gt; round_(model.numvars.extrapolated_error)</span>
+<span class="sd">        0.001</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">extrapolated_error</span> <span class="o">=</span> <span class="n">modelutils</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="n">modelutils</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">error</span><span class="p">)</span> <span class="o">+</span>
+                <span class="p">(</span><span class="n">modelutils</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">error</span><span class="p">)</span> <span class="o">-</span>
+                 <span class="n">modelutils</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">last_error</span><span class="p">))</span> <span class="o">*</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numconsts</span><span class="o">.</span><span class="n">nmb_methods</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">extrapolated_error</span> <span class="o">=</span> <span class="o">-</span><span class="mf">999.9</span></div></div>
+
+<span class="n">autodoctools</span><span class="o">.</span><span class="n">autodoc_module</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

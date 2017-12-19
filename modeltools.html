@@ -1,0 +1,691 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>modeltools &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="objecttools" href="objecttools.html" />
+    <link rel="prev" title="modelimports" href="modelimports.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="objecttools.html" title="objecttools"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="modelimports.html" title="modelimports"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="core.html" accesskey="U">Core Modules</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="modeltools">
+<span id="id1"></span><h1>modeltools<a class="headerlink" href="#modeltools" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-hydpy.core.modeltools"></span><p>This module implements tools for the development of hydrological models.</p>
+<p>Module <a class="reference internal" href="#module-hydpy.core.modeltools" title="hydpy.core.modeltools"><code class="xref py py-mod docutils literal"><span class="pre">modeltools</span></code></a> implements the following members:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#hydpy.core.modeltools.MetaModel" title="hydpy.core.modeltools.MetaModel"><code class="xref py py-class docutils literal"><span class="pre">MetaModel</span></code></a> no description available</li>
+<li><a class="reference internal" href="#hydpy.core.modeltools.Model" title="hydpy.core.modeltools.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> Base class for all hydrological models.</li>
+<li><a class="reference internal" href="#hydpy.core.modeltools.NumPars" title="hydpy.core.modeltools.NumPars"><code class="xref py py-class docutils literal"><span class="pre">NumPars</span></code></a> no description available</li>
+<li><a class="reference internal" href="#hydpy.core.modeltools.NumConstsELS" title="hydpy.core.modeltools.NumConstsELS"><code class="xref py py-class docutils literal"><span class="pre">NumConstsELS</span></code></a> no description available</li>
+<li><a class="reference internal" href="#hydpy.core.modeltools.NumVarsELS" title="hydpy.core.modeltools.NumVarsELS"><code class="xref py py-class docutils literal"><span class="pre">NumVarsELS</span></code></a> no description available</li>
+<li><a class="reference internal" href="#hydpy.core.modeltools.ModelELS" title="hydpy.core.modeltools.ModelELS"><code class="xref py py-class docutils literal"><span class="pre">ModelELS</span></code></a> no description available</li>
+</ul>
+</div></blockquote>
+<hr class="docutils" />
+<dl class="class">
+<dt id="hydpy.core.modeltools.MetaModel">
+<em class="property">class </em><code class="descclassname">hydpy.core.modeltools.</code><code class="descname">MetaModel</code><a class="reference internal" href="_modules/hydpy/core/modeltools.html#MetaModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.MetaModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#type" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">type</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.modeltools.Model">
+<em class="property">class </em><code class="descclassname">hydpy.core.modeltools.</code><code class="descname">Model</code><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hydpy.core.modeltools.MetaModel" title="hydpy.core.modeltools.MetaModel"><code class="xref py py-class docutils literal"><span class="pre">hydpy.core.modeltools.MetaModel</span></code></a></p>
+<p>Base class for all hydrological models.</p>
+<dl class="attribute">
+<dt id="hydpy.core.modeltools.Model.NUMERICAL">
+<code class="descname">NUMERICAL</code><em class="property"> = False</em><a class="headerlink" href="#hydpy.core.modeltools.Model.NUMERICAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.Model.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect the link sequences of the actual model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.Model.doit">
+<code class="descname">doit</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model.doit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model.doit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.Model.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.Model.loaddata">
+<code class="descname">loaddata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model.loaddata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model.loaddata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.Model.savedata">
+<code class="descname">savedata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model.savedata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model.savedata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.Model.update_inlets">
+<code class="descname">update_inlets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model.update_inlets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model.update_inlets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.Model.update_outlets">
+<code class="descname">update_outlets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model.update_outlets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model.update_outlets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.Model.update_receivers">
+<code class="descname">update_receivers</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model.update_receivers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model.update_receivers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.Model.update_senders">
+<code class="descname">update_senders</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model.update_senders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model.update_senders" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.Model.new2old">
+<code class="descname">new2old</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#Model.new2old"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.Model.new2old" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign the new/final state values of the actual time step to the
+new/initial state values of the next time step.  Needs to be
+overwritten in Cython mode.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.core.modeltools.Model.idx_sim">
+<code class="descname">idx_sim</code><a class="headerlink" href="#hydpy.core.modeltools.Model.idx_sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index of the actual simulation time step.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.modeltools.NumPars">
+<em class="property">class </em><code class="descclassname">hydpy.core.modeltools.</code><code class="descname">NumPars</code><a class="reference internal" href="_modules/hydpy/core/modeltools.html#NumPars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.NumPars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.modeltools.NumConstsELS">
+<em class="property">class </em><code class="descclassname">hydpy.core.modeltools.</code><code class="descname">NumConstsELS</code><a class="reference internal" href="_modules/hydpy/core/modeltools.html#NumConstsELS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.NumConstsELS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hydpy.core.modeltools.NumPars" title="hydpy.core.modeltools.NumPars"><code class="xref py py-class docutils literal"><span class="pre">hydpy.core.modeltools.NumPars</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.modeltools.NumVarsELS">
+<em class="property">class </em><code class="descclassname">hydpy.core.modeltools.</code><code class="descname">NumVarsELS</code><a class="reference internal" href="_modules/hydpy/core/modeltools.html#NumVarsELS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.NumVarsELS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hydpy.core.modeltools.NumPars" title="hydpy.core.modeltools.NumPars"><code class="xref py py-class docutils literal"><span class="pre">hydpy.core.modeltools.NumPars</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="hydpy.core.modeltools.ModelELS">
+<em class="property">class </em><code class="descclassname">hydpy.core.modeltools.</code><code class="descname">ModelELS</code><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hydpy.core.modeltools.Model" title="hydpy.core.modeltools.Model"><code class="xref py py-class docutils literal"><span class="pre">hydpy.core.modeltools.Model</span></code></a></p>
+<dl class="attribute">
+<dt id="hydpy.core.modeltools.ModelELS.NUMERICAL">
+<code class="descname">NUMERICAL</code><em class="property"> = True</em><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.NUMERICAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.doit">
+<code class="descname">doit</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.doit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.doit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.solve" title="Permalink to this definition">¶</a></dt>
+<dd><div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">abserrormax</span> <span class="o">=</span> <span class="mf">1e-2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">reldtmin</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(1.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(0.905)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.095)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="p">))</span>
+<span class="go">0.904837</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">abserrormax</span> <span class="o">=</span> <span class="mf">1e-3</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(0.904833)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.095167)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">4</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">abserrormax</span> <span class="o">=</span> <span class="mf">1e-4</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(0.904837)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.095163)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">7</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">abserrormax</span> <span class="o">=</span> <span class="mf">1e-12</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(0.904837)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.095163)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span>
+<span class="go">8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">29</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">abserrormax</span> <span class="o">=</span> <span class="mf">1e-2</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="p">))</span>
+<span class="go">0.606531</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(0.606771)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.393229)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">7</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="p">))</span>
+<span class="go">0.135335</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(0.134658)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.865342)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">22</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(0.018929)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.115728)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">13</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="p">))</span>
+<span class="go">0.018316</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(0.019774)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.980226)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+<span class="go">0.3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">44</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.magictools</span> <span class="k">import</span> <span class="n">reverse_model_wildcard_import</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reverse_model_wildcard_import</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v2</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">abserrormax</span> <span class="o">=</span> <span class="mf">1e-2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solver</span><span class="o">.</span><span class="n">reldtmin</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(0.5)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.5)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(-0.006827)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(1.006827)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">58</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">(</span><span class="mf">2.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span>
+<span class="go">s(-0.00072)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(1.00072)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">nmb_calls</span>
+<span class="go">50</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.calculate_single_terms">
+<code class="descname">calculate_single_terms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.calculate_single_terms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.calculate_single_terms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply all methods stored in <code class="xref py py-attr docutils literal"><span class="pre">_PART_ODE_METHODS</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">calculate_single_terms</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(0.25)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.calculate_full_terms">
+<code class="descname">calculate_full_terms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.calculate_full_terms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.calculate_full_terms" title="Permalink to this definition">¶</a></dt>
+<dd><div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">old</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="mf">0.25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">calculate_full_terms</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">old</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">new</span>
+<span class="go">0.75</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.get_point_states">
+<code class="descname">get_point_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.get_point_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.get_point_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the states corresponding to the actual stage.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">old</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">new</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_s_points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">get_point_states</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">old</span>
+<span class="go">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">new</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.set_point_states">
+<code class="descname">set_point_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.set_point_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.set_point_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the states corresponding to the actual stage.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">old</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">new</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_s_points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">set_point_states</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">points</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+<span class="go">0.0, 0.0, 1.0, 0.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.set_result_states">
+<code class="descname">set_result_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.set_result_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.set_result_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the final states of the actual method.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">old</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">states</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">new</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_s_results</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">set_result_states</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">results</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+<span class="go">0.0, 0.0, 1.0, 0.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.get_sum_fluxes">
+<code class="descname">get_sum_fluxes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.get_sum_fluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.get_sum_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the sum of the fluxes calculated so far.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_q_sum</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">get_sum_fluxes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(1.0)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.set_point_fluxes">
+<code class="descname">set_point_fluxes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.set_point_fluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.set_point_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the fluxes corresponding to the actual stage.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_q_points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">set_point_fluxes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">points</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+<span class="go">0.0, 0.0, 1.0, 0.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.set_result_fluxes">
+<code class="descname">set_result_fluxes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.set_result_fluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.set_result_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the final fluxes of the actual method.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_q_results</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">set_result_fluxes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">results</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+<span class="go">0.0, 0.0, 1.0, 0.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.integrate_fluxes">
+<code class="descname">integrate_fluxes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.integrate_fluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.integrate_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a dot multiplication between the fluxes and the
+A coefficients associated with the different stages of the
+actual method.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_stage</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_q_points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="o">-</span><span class="mf">999.</span><span class="p">,</span> <span class="mf">0.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">integrate_fluxes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">pub</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">numconsts</span><span class="o">.</span><span class="n">a_coefs</span><span class="p">)[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+<span class="go">0.375, 0.125</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span>
+<span class="go">q(2.9375)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.reset_sum_fluxes">
+<code class="descname">reset_sum_fluxes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.reset_sum_fluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.reset_sum_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the sum of the fluxes calculated so far to zero.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_q_sum</span> <span class="o">=</span> <span class="mf">5.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">reset_sum_fluxes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_q_sum</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.addup_fluxes">
+<code class="descname">addup_fluxes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.addup_fluxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.addup_fluxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add up the sum of the fluxes calculated so far.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_q_sum</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">q</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">addup_fluxes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_q_sum</span>
+<span class="go">3.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.calculate_error">
+<code class="descname">calculate_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.calculate_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.calculate_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the numerical error based on the fluxes calculated
+by the current and the last method.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fluxes</span><span class="o">.</span><span class="n">fastaccess</span><span class="o">.</span><span class="n">_q_results</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">0.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">calculate_error</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.core.modeltools.ModelELS.extrapolate_error">
+<code class="descname">extrapolate_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/core/modeltools.html#ModelELS.extrapolate_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.core.modeltools.ModelELS.extrapolate_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the numerical error to be expected when applying all
+methods available based on the results of the current and the
+last method.</p>
+<p>Note that this expolation strategy cannot be applied on the first
+method.  If the current method is the first one, <cite>-999.9</cite> is returned.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.models.test_v1</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterstep</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="mf">1e-2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="mf">1e-1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">extrapolate_error</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">extrapolated_error</span><span class="p">)</span>
+<span class="go">0.01</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">idx_method</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">extrapolate_error</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">numvars</span><span class="o">.</span><span class="n">extrapolated_error</span><span class="p">)</span>
+<span class="go">0.001</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="modelimports.html"
+                        title="previous chapter">modelimports</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="objecttools.html"
+                        title="next chapter">objecttools</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/modeltools.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="objecttools.html" title="objecttools"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="modelimports.html" title="modelimports"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="core.html" >Core Modules</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

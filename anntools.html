@@ -1,0 +1,736 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>anntools &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="armatools" href="armatools.html" />
+    <link rel="prev" title="Auxiliary Modules" href="auxiliaries.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="armatools.html" title="armatools"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="auxiliaries.html" title="Auxiliary Modules"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="auxiliaries.html" accesskey="U">Auxiliary Modules</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="anntools">
+<span id="id1"></span><h1>anntools<a class="headerlink" href="#anntools" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-hydpy.auxs.anntools"></span><p>This module implements rudimantary artificial neural network tools,
+required for some models implemented in the HydPy framework.</p>
+<p>A note for developers: some of the implemented features are to be applied
+during model simulations are in some other way performance-critical.  Hence,
+the actual calculations are defined in the Cython extension module
+<code class="xref py py-mod docutils literal"><span class="pre">annutils</span></code>.</p>
+<p>Module <a class="reference internal" href="#module-hydpy.auxs.anntools" title="hydpy.auxs.anntools"><code class="xref py py-mod docutils literal"><span class="pre">anntools</span></code></a> implements the following members:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#hydpy.auxs.anntools.ANN" title="hydpy.auxs.anntools.ANN"><code class="xref py py-class docutils literal"><span class="pre">ANN</span></code></a> Multi-layer feed forward artificial neural network.</li>
+</ul>
+</div></blockquote>
+<hr class="docutils" />
+<dl class="class">
+<dt id="hydpy.auxs.anntools.ANN">
+<em class="property">class </em><code class="descclassname">hydpy.auxs.anntools.</code><code class="descname">ANN</code><a class="reference internal" href="_modules/hydpy/auxs/anntools.html#ANN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.auxs.anntools.ANN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Multi-layer feed forward artificial neural network.</p>
+<p>The applied activation function is the logistic function:</p>
+<blockquote>
+<div><span class="math">\(f(x) = \frac{1}{1+exp(-x)}\)</span></div></blockquote>
+<p>Class <a class="reference internal" href="#hydpy.auxs.anntools.ANN" title="hydpy.auxs.anntools.ANN"><code class="xref py py-class docutils literal"><span class="pre">ANN</span></code></a> is intended to be subclassed for the derivation of
+very complex control parameters.  Its original purpose was to allow for
+defining arbitrary continuous relationsships between the water stored
+in a dam and the associated water stage (see model …).  However,
+class <a class="reference internal" href="#hydpy.auxs.anntools.ANN" title="hydpy.auxs.anntools.ANN"><code class="xref py py-class docutils literal"><span class="pre">ANN</span></code></a> can also be applied directly, as shown in the
+following examples.  But if you are looking for a flexible stand-alone
+artifical neural network implementation in Python, you will find much
+more general tools easily.</p>
+<p>Firstly, define the most single artificial neural network consisting of
+only one input node, neuron, and output node respectively, and pass
+some arbitrary network parameters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.auxs.anntools</span> <span class="k">import</span> <span class="n">ANN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span> <span class="o">=</span> <span class="n">ANN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="p">(</span><span class="n">nmb_inputs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nmb_neurons</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">nmb_outputs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">weights_input</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">weights_output</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">intercepts_hidden</span><span class="o">=-</span><span class="mf">16.0</span><span class="p">,</span> <span class="n">intercepts_output</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following loop subsequently sets the values 0 to 8 as input values,
+performs the calculateion, and prints out the final output.  As to be
+expected, the results show the shape of the logistic function:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">input_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">ann</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_</span>
+<span class="gp">... </span>    <span class="n">ann</span><span class="o">.</span><span class="n">process_actual_input</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="n">round_</span><span class="p">([</span><span class="n">input_</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="go">0, -1.0</span>
+<span class="go">1, -0.999982</span>
+<span class="go">2, -0.998994</span>
+<span class="go">3, -0.946041</span>
+<span class="go">4, 0.5</span>
+<span class="go">5, 1.946041</span>
+<span class="go">6, 1.998994</span>
+<span class="go">7, 1.999982</span>
+<span class="go">8, 2.0</span>
+</pre></div>
+</div>
+<p>One can also directly plot the resulting graph:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can close the plotting window manually or by writing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pyplot</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The following example shows that everything works well for more complex
+single layer networks also (manual tests have been performed in a
+spreadsheet program):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">nmb_inputs</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">nmb_neurons</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">nmb_outputs</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span> <span class="o">=</span> <span class="p">[[</span> <span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.7</span><span class="p">,</span>  <span class="mf">0.6</span><span class="p">],</span>
+<span class="gp">... </span>                     <span class="p">[</span> <span class="mf">0.9</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.8</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">... </span>                     <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span>  <span class="mf">2.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span> <span class="o">=</span> <span class="p">[[</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="mf">2.0</span><span class="p">],</span>
+<span class="gp">... </span>                      <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span>  <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">... </span>                      <span class="p">[</span> <span class="mf">0.4</span><span class="p">,</span>  <span class="mf">2.4</span><span class="p">],</span>
+<span class="gp">... </span>                      <span class="p">[</span> <span class="mf">0.8</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">0.9</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">1.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span>  <span class="mf">1.3</span><span class="p">,</span>  <span class="mf">1.6</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">process_actual_input</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span>
+<span class="go">1.822222, 1.876983</span>
+</pre></div>
+</div>
+<p>A example for a multi layer networks is still missing…</p>
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.NDIM">
+<code class="descname">NDIM</code><em class="property"> = 0</em><a class="headerlink" href="#hydpy.auxs.anntools.ANN.NDIM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.TYPE">
+<code class="descname">TYPE</code><em class="property"> = 'annutils.ANN'</em><a class="headerlink" href="#hydpy.auxs.anntools.ANN.TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.TIME">
+<code class="descname">TIME</code><em class="property"> = None</em><a class="headerlink" href="#hydpy.auxs.anntools.ANN.TIME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.SPAN">
+<code class="descname">SPAN</code><em class="property"> = (None, None)</em><a class="headerlink" href="#hydpy.auxs.anntools.ANN.SPAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.auxs.anntools.ANN.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>subpars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/auxs/anntools.html#ANN.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.auxs.anntools.ANN.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.name">
+<code class="descname">name</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_inputs">
+<code class="descname">nmb_inputs</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of input nodes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_outputs">
+<code class="descname">nmb_outputs</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of output nodes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_layers">
+<code class="descname">nmb_layers</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_layers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of hidden layers.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_neurons">
+<code class="descname">nmb_neurons</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_neurons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of neurons of the inner layers.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.weights_input">
+<code class="descname">weights_input</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.weights_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Weights between all input nodes and neurons of the first hidden
+layer.</p>
+<p>The input nodes and the neurons are varied on the first axis and
+on the second axis of the 2-dimensional array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.auxs.anntools</span> <span class="k">import</span> <span class="n">ANN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span> <span class="o">=</span> <span class="n">ANN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="p">(</span><span class="n">nmb_inputs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nmb_neurons</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span>
+<span class="go">array([[ 0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.]])</span>
+</pre></div>
+</div>
+<p>It is allowed to set values via slicing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span>
+<span class="go">array([[ 1.,  0.,  0.],</span>
+<span class="go">       [ 1.,  0.,  0.]])</span>
+</pre></div>
+</div>
+<p>If possible, type conversions are performed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span> <span class="o">=</span> <span class="s1">&#39;2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span>
+<span class="go">array([[ 2.,  2.,  2.],</span>
+<span class="go">       [ 2.,  2.,  2.]])</span>
+</pre></div>
+</div>
+<p>One can assign whole matrices directly:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span>
+<span class="go">array([[ 1.,  0.,  0.],</span>
+<span class="go">       [ 0.,  1.,  0.]])</span>
+</pre></div>
+</div>
+<p>One can also delete the values contained in the array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span>
+<span class="go">array([[ 0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.]])</span>
+</pre></div>
+</div>
+<p>Errors like wrong shapes (or unconvertible inputs) result in error
+messages:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_input</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">While trying to set the input weights of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (3,3) into shape (2,3)</span>
+</pre></div>
+</div>
+<p>The number of input weights is available as a property:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">nmb_weights_input</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.shape_weights_input">
+<code class="descname">shape_weights_input</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.shape_weights_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shape of the array containing the input weights</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_weights_input">
+<code class="descname">nmb_weights_input</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_weights_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of input weights.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.weights_output">
+<code class="descname">weights_output</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.weights_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Weights between all neurons of the last hidden layer and the output
+nodes.</p>
+<p>The neurons and the output nodes are varied on the first axis and
+on the second axis of the 2-dimensional array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.auxs.anntools</span> <span class="k">import</span> <span class="n">ANN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span> <span class="o">=</span> <span class="n">ANN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="p">(</span><span class="n">nmb_outputs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nmb_neurons</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span>
+<span class="go">array([[ 0.,  0.],</span>
+<span class="go">       [ 0.,  0.],</span>
+<span class="go">       [ 0.,  0.]])</span>
+</pre></div>
+</div>
+<p>It is allowed to set values via slicing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span>
+<span class="go">array([[ 1.,  0.],</span>
+<span class="go">       [ 1.,  0.],</span>
+<span class="go">       [ 1.,  0.]])</span>
+</pre></div>
+</div>
+<p>If possible, type conversions are performed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span> <span class="o">=</span> <span class="s1">&#39;2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span>
+<span class="go">array([[ 2.,  2.],</span>
+<span class="go">       [ 2.,  2.],</span>
+<span class="go">       [ 2.,  2.]])</span>
+</pre></div>
+</div>
+<p>One can assign whole matrices directly:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span>
+<span class="go">array([[ 1.,  0.],</span>
+<span class="go">       [ 0.,  1.],</span>
+<span class="go">       [ 0.,  0.]])</span>
+</pre></div>
+</div>
+<p>One can also delete the values contained in the array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span>
+<span class="go">array([[ 0.,  0.],</span>
+<span class="go">       [ 0.,  0.],</span>
+<span class="go">       [ 0.,  0.]])</span>
+</pre></div>
+</div>
+<p>Errors like wrong shapes (or unconvertible inputs) result in error
+messages:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_output</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">While trying to set the output weights of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (3,3) into shape (3,2)</span>
+</pre></div>
+</div>
+<p>The number of output weights is available as a property:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">nmb_weights_output</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.shape_weights_output">
+<code class="descname">shape_weights_output</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.shape_weights_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shape of the array containing the output weights</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_weights_output">
+<code class="descname">nmb_weights_output</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_weights_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of output weights.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.weights_hidden">
+<code class="descname">weights_hidden</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.weights_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Weights between between the neurons of the different hidden layers.</p>
+<p>The layers are varied on the first axis, the neurons of the respective
+upstream layer on the second axis and the neurons of the respective
+downstream layer on the third axis of a 3-dimensional array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.auxs.anntools</span> <span class="k">import</span> <span class="n">ANN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span> <span class="o">=</span> <span class="n">ANN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="p">(</span><span class="n">nmb_neurons</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_hidden</span>
+<span class="go">array([[[  0.,   0.,  nan],</span>
+<span class="go">        [  0.,   0.,  nan],</span>
+<span class="go">        [  0.,   0.,  nan]],</span>
+
+<span class="go">       [[  0.,   0.,   0.],</span>
+<span class="go">        [  0.,   0.,   0.],</span>
+<span class="go">        [ nan,  nan,  nan]]])</span>
+</pre></div>
+</div>
+<p>It is allowed to set values via slicing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_hidden</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_hidden</span>
+<span class="go">array([[[  0.,   0.,  nan],</span>
+<span class="go">        [  0.,   0.,  nan],</span>
+<span class="go">        [  0.,   0.,  nan]],</span>
+
+<span class="go">       [[  1.,   0.,   0.],</span>
+<span class="go">        [  1.,   0.,   0.],</span>
+<span class="go">        [  1.,  nan,  nan]]])</span>
+</pre></div>
+</div>
+<p>If possible, type conversions are performed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_hidden</span> <span class="o">=</span> <span class="s1">&#39;2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_hidden</span>
+<span class="go">array([[[ 2.,  2.,  2.],</span>
+<span class="go">        [ 2.,  2.,  2.],</span>
+<span class="go">        [ 2.,  2.,  2.]],</span>
+
+<span class="go">       [[ 2.,  2.,  2.],</span>
+<span class="go">        [ 2.,  2.,  2.],</span>
+<span class="go">        [ 2.,  2.,  2.]]])</span>
+</pre></div>
+</div>
+<p>One can assign whole matrices directly:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_hidden</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_hidden</span>
+<span class="go">array([[[ 1.,  0.,  0.],</span>
+<span class="go">        [ 0.,  1.,  0.],</span>
+<span class="go">        [ 0.,  0.,  1.]],</span>
+
+<span class="go">       [[ 1.,  0.,  0.],</span>
+<span class="go">        [ 0.,  1.,  0.],</span>
+<span class="go">        [ 0.,  0.,  1.]]])</span>
+</pre></div>
+</div>
+<p>One can also delete the values contained in the array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">ann</span><span class="o">.</span><span class="n">weights_hidden</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_hidden</span>
+<span class="go">array([[[  0.,   0.,  nan],</span>
+<span class="go">        [  0.,   0.,  nan],</span>
+<span class="go">        [  0.,   0.,  nan]],</span>
+
+<span class="go">       [[  0.,   0.,   0.],</span>
+<span class="go">        [  0.,   0.,   0.],</span>
+<span class="go">        [ nan,  nan,  nan]]])</span>
+</pre></div>
+</div>
+<p>Errors like wrong shapes (or unconvertible inputs) result in error
+messages:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">weights_hidden</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">While trying to set the hidden weights of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (3,2) into shape (2,3,3)</span>
+</pre></div>
+</div>
+<p>The number of input weights is available as a property:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">nmb_weights_hidden</span>
+<span class="go">12</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.shape_weights_hidden">
+<code class="descname">shape_weights_hidden</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.shape_weights_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shape of the array containing the activations of the hidden neurons.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_weights_hidden">
+<code class="descname">nmb_weights_hidden</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_weights_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of hidden weights.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.intercepts_hidden">
+<code class="descname">intercepts_hidden</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.intercepts_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intercepts of all neurons of the hidden layers.</p>
+<p>All intercepts are handled in a 1-dimensional array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.auxs.anntools</span> <span class="k">import</span> <span class="n">ANN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span> <span class="o">=</span> <span class="n">ANN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="p">(</span><span class="n">nmb_neurons</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span>
+<span class="go">array([[  0.,   0.,   0.],</span>
+<span class="go">       [  0.,   0.,  nan]])</span>
+</pre></div>
+</div>
+<p>It is allowed to set values via slicing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span>
+<span class="go">array([[  1.,   1.,   1.],</span>
+<span class="go">       [  0.,   0.,  nan]])</span>
+</pre></div>
+</div>
+<p>If possible, type conversions are performed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span> <span class="o">=</span> <span class="s1">&#39;2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span>
+<span class="go">array([[ 2.,  2.,  2.],</span>
+<span class="go">       [ 2.,  2.,  2.]])</span>
+</pre></div>
+</div>
+<p>One can assign whole matrices directly:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span>
+<span class="go">array([[ 1.,  3.,  2.],</span>
+<span class="go">       [ 1.,  3.,  2.]])</span>
+</pre></div>
+</div>
+<p>One can also delete the values contained in the array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span>
+<span class="go">array([[  0.,   0.,   0.],</span>
+<span class="go">       [  0.,   0.,  nan]])</span>
+</pre></div>
+</div>
+<p>Errors like wrong shapes (or unconvertible inputs) result in error
+messages:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_hidden</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">While trying to set the neuron related intercepts of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (2) into shape (2,3)</span>
+</pre></div>
+</div>
+<p>The number of input intercepts is available as a property:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">nmb_intercepts_hidden</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.shape_intercepts_hidden">
+<code class="descname">shape_intercepts_hidden</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.shape_intercepts_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shape if the array containing the intercepts of neurons of
+the hidden layers.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_intercepts_hidden">
+<code class="descname">nmb_intercepts_hidden</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_intercepts_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of input intercepts.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.intercepts_output">
+<code class="descname">intercepts_output</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.intercepts_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intercepts of all output nodes.</p>
+<p>All intercepts are handled in a 1-dimensional array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.auxs.anntools</span> <span class="k">import</span> <span class="n">ANN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span> <span class="o">=</span> <span class="n">ANN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="p">(</span><span class="n">nmb_outputs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span>
+<span class="go">array([ 0.,  0.,  0.])</span>
+</pre></div>
+</div>
+<p>It is allowed to set values via slicing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span>
+<span class="go">array([ 0.,  1.,  1.])</span>
+</pre></div>
+</div>
+<p>If possible, type conversions are performed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span> <span class="o">=</span> <span class="s1">&#39;2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span>
+<span class="go">array([ 2.,  2.,  2.])</span>
+</pre></div>
+</div>
+<p>One can assign whole matrices directly:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span>
+<span class="go">array([ 1.,  3.,  2.])</span>
+</pre></div>
+</div>
+<p>One can also delete the values contained in the array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span>
+<span class="go">array([ 0.,  0.,  0.])</span>
+</pre></div>
+</div>
+<p>Errors like wrong shapes (or unconvertible inputs) result in error
+messages:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">intercepts_output</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">While trying to set the output node related intercepts of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (2) into shape (3)</span>
+</pre></div>
+</div>
+<p>The number of output intercepts is available as a property:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">nmb_intercepts_output</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.shape_intercepts_output">
+<code class="descname">shape_intercepts_output</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.shape_intercepts_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shape if the array containing the intercepts of neurons of
+the hidden layers.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_intercepts_output">
+<code class="descname">nmb_intercepts_output</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_intercepts_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of output intercepts.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.outputs">
+<code class="descname">outputs</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Values of the output nodes.</p>
+<p>All output values are handled in a 1-dimensional array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.auxs.anntools</span> <span class="k">import</span> <span class="n">ANN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span> <span class="o">=</span> <span class="n">ANN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="p">(</span><span class="n">nmb_outputs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">outputs</span>
+<span class="go">array([ 0.,  0.,  0.])</span>
+</pre></div>
+</div>
+<p>It is not allowed to change output values manually:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">AttributeError</span>: <span class="n">can&#39;t set attribute</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.inputs">
+<code class="descname">inputs</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Values of the input nodes.</p>
+<p>All input values are handled in a 1-dimensional array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.auxs.anntools</span> <span class="k">import</span> <span class="n">ANN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span> <span class="o">=</span> <span class="n">ANN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="p">(</span><span class="n">nmb_inputs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">inputs</span>
+<span class="go">array([ 0.,  0.,  0.])</span>
+</pre></div>
+</div>
+<p>It is allowed to set values via slicing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">inputs</span>
+<span class="go">array([ 0.,  1.,  1.])</span>
+</pre></div>
+</div>
+<p>If possible, type conversions are performed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="s1">&#39;2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">inputs</span>
+<span class="go">array([ 2.,  2.,  2.])</span>
+</pre></div>
+</div>
+<p>One can assign whole matrices directly:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">inputs</span>
+<span class="go">array([ 1.,  3.,  2.])</span>
+</pre></div>
+</div>
+<p>One can also delete the values contained in the array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">ann</span><span class="o">.</span><span class="n">inputs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">inputs</span>
+<span class="go">array([ 0.,  0.,  0.])</span>
+</pre></div>
+</div>
+<p>Errors like wrong shapes (or unconvertible inputs) result in error
+messages:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ann</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">While trying to set the inputs of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (2) into shape (3)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hydpy.auxs.anntools.ANN.process_actual_input">
+<code class="descname">process_actual_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/auxs/anntools.html#ANN.process_actual_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.auxs.anntools.ANN.process_actual_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the network output values based on the input values
+defined previously.</p>
+<p>For more information see the documentation on class <a class="reference internal" href="#hydpy.auxs.anntools.ANN" title="hydpy.auxs.anntools.ANN"><code class="xref py py-class docutils literal"><span class="pre">ANN</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_weights">
+<code class="descname">nmb_weights</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_weights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_intercepts">
+<code class="descname">nmb_intercepts</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_intercepts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.auxs.anntools.ANN.nmb_parameters">
+<code class="descname">nmb_parameters</code><a class="headerlink" href="#hydpy.auxs.anntools.ANN.nmb_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.auxs.anntools.ANN.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>xmin</em>, <em>xmax</em>, <em>idx_input=0</em>, <em>idx_output=0</em>, <em>points=100</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydpy/auxs/anntools.html#ANN.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hydpy.auxs.anntools.ANN.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="auxiliaries.html"
+                        title="previous chapter">Auxiliary Modules</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="armatools.html"
+                        title="next chapter">armatools</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/anntools.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="armatools.html" title="armatools"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="auxiliaries.html" title="Auxiliary Modules"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="auxiliaries.html" >Auxiliary Modules</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

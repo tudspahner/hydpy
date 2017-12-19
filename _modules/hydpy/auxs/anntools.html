@@ -1,0 +1,972 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>hydpy.auxs.anntools &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for hydpy.auxs.anntools</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This module implements rudimantary artificial neural network tools,</span>
+<span class="sd">required for some models implemented in the HydPy framework.</span>
+
+<span class="sd">A note for developers: some of the implemented features are to be applied</span>
+<span class="sd">during model simulations are in some other way performance-critical.  Hence,</span>
+<span class="sd">the actual calculations are defined in the Cython extension module</span>
+<span class="sd">:mod:`~hydpy.cythons.annutils`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># import...</span>
+<span class="c1"># ...from standard library</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="c1"># ...from site-packages</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span>
+<span class="c1"># ...from HydPy</span>
+<span class="kn">from</span> <span class="nn">hydpy.core</span> <span class="k">import</span> <span class="n">objecttools</span>
+<span class="kn">from</span> <span class="nn">hydpy.core</span> <span class="k">import</span> <span class="n">autodoctools</span>
+<span class="kn">from</span> <span class="nn">hydpy.cythons</span> <span class="k">import</span> <span class="n">annutils</span>
+
+
+<div class="viewcode-block" id="ANN"><a class="viewcode-back" href="../../../anntools.html#hydpy.auxs.anntools.ANN">[docs]</a><span class="k">class</span> <span class="nc">ANN</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Multi-layer feed forward artificial neural network.</span>
+
+<span class="sd">    The applied activation function is the logistic function:</span>
+
+<span class="sd">      :math:`f(x) = \\frac{1}{1+exp(-x)}`</span>
+
+<span class="sd">    Class :class:`ANN` is intended to be subclassed for the derivation of</span>
+<span class="sd">    very complex control parameters.  Its original purpose was to allow for</span>
+<span class="sd">    defining arbitrary continuous relationsships between the water stored</span>
+<span class="sd">    in a dam and the associated water stage (see model ...).  However,</span>
+<span class="sd">    class :class:`ANN` can also be applied directly, as shown in the</span>
+<span class="sd">    following examples.  But if you are looking for a flexible stand-alone</span>
+<span class="sd">    artifical neural network implementation in Python, you will find much</span>
+<span class="sd">    more general tools easily.</span>
+
+<span class="sd">    Firstly, define the most single artificial neural network consisting of</span>
+<span class="sd">    only one input node, neuron, and output node respectively, and pass</span>
+<span class="sd">    some arbitrary network parameters:</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy.auxs.anntools import ANN</span>
+<span class="sd">    &gt;&gt;&gt; ann = ANN()</span>
+<span class="sd">    &gt;&gt;&gt; ann(nmb_inputs=1, nmb_neurons=(1,), nmb_outputs=1,</span>
+<span class="sd">    ...     weights_input=4.0, weights_output=3.0,</span>
+<span class="sd">    ...     intercepts_hidden=-16.0, intercepts_output=-1.0)</span>
+
+<span class="sd">    The following loop subsequently sets the values 0 to 8 as input values,</span>
+<span class="sd">    performs the calculateion, and prints out the final output.  As to be</span>
+<span class="sd">    expected, the results show the shape of the logistic function:</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">    &gt;&gt;&gt; for input_ in range(9):</span>
+<span class="sd">    ...     ann.inputs[0] = input_</span>
+<span class="sd">    ...     ann.process_actual_input()</span>
+<span class="sd">    ...     round_([input_, ann.outputs[0]])</span>
+<span class="sd">    0, -1.0</span>
+<span class="sd">    1, -0.999982</span>
+<span class="sd">    2, -0.998994</span>
+<span class="sd">    3, -0.946041</span>
+<span class="sd">    4, 0.5</span>
+<span class="sd">    5, 1.946041</span>
+<span class="sd">    6, 1.998994</span>
+<span class="sd">    7, 1.999982</span>
+<span class="sd">    8, 2.0</span>
+
+<span class="sd">    One can also directly plot the resulting graph:</span>
+
+<span class="sd">    &gt;&gt;&gt; ann.plot(0.0, 8.0)</span>
+
+<span class="sd">    You can close the plotting window manually or by writing:</span>
+
+<span class="sd">    &gt;&gt;&gt; from matplotlib import pyplot</span>
+<span class="sd">    &gt;&gt;&gt; pyplot.close()</span>
+
+
+<span class="sd">    The following example shows that everything works well for more complex</span>
+<span class="sd">    single layer networks also (manual tests have been performed in a</span>
+<span class="sd">    spreadsheet program):</span>
+
+<span class="sd">    &gt;&gt;&gt; ann.nmb_inputs = 3</span>
+<span class="sd">    &gt;&gt;&gt; ann.nmb_neurons = (4,)</span>
+<span class="sd">    &gt;&gt;&gt; ann.nmb_outputs = 2</span>
+<span class="sd">    &gt;&gt;&gt; ann.weights_input = [[ 0.2, -0.1, -1.7,  0.6],</span>
+<span class="sd">    ...                      [ 0.9,  0.2,  0.8,  0.0],</span>
+<span class="sd">    ...                      [-0.5, -1.0,  2.3, -0.4]]</span>
+<span class="sd">    &gt;&gt;&gt; ann.weights_output = [[ 0.0,  2.0],</span>
+<span class="sd">    ...                       [-0.5,  1.0],</span>
+<span class="sd">    ...                       [ 0.4,  2.4],</span>
+<span class="sd">    ...                       [ 0.8, -0.9]]</span>
+<span class="sd">    &gt;&gt;&gt; ann.intercepts_hidden = [ 0.9,  0.0, -0.4, -0.2]</span>
+<span class="sd">    &gt;&gt;&gt; ann.intercepts_output = [ 1.3, -2.0]</span>
+<span class="sd">    &gt;&gt;&gt; ann.inputs = [-0.1,  1.3,  1.6]</span>
+<span class="sd">    &gt;&gt;&gt; ann.process_actual_input()</span>
+<span class="sd">    &gt;&gt;&gt; round_(ann.outputs)</span>
+<span class="sd">    1.822222, 1.876983</span>
+
+<span class="sd">    A example for a multi layer networks is still missing...</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NDIM</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;annutils.ANN&#39;</span>
+    <span class="n">TIME</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">SPAN</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subpars</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fastaccess</span> <span class="o">=</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">FastAccess</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span> <span class="o">=</span> <span class="n">annutils</span><span class="o">.</span><span class="n">ANN</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ANN.connect"><a class="viewcode-back" href="../../../anntools.html#hydpy.auxs.anntools.ANN.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subpars</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subpars</span> <span class="o">=</span> <span class="n">subpars</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fastaccess</span> <span class="o">=</span> <span class="n">subpars</span><span class="o">.</span><span class="n">fastaccess</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fastaccess</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">classname</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nmb_inputs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nmb_neurons</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">nmb_outputs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">weights_input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights_output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights_hidden</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">intercepts_hidden</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">intercepts_output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_inputs</span> <span class="o">=</span> <span class="n">nmb_inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_outputs</span> <span class="o">=</span> <span class="n">nmb_outputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span> <span class="o">=</span> <span class="n">nmb_neurons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights_input</span> <span class="o">=</span> <span class="n">weights_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights_hidden</span> <span class="o">=</span> <span class="n">weights_hidden</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights_output</span> <span class="o">=</span> <span class="n">weights_output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intercepts_hidden</span> <span class="o">=</span> <span class="n">intercepts_hidden</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intercepts_output</span> <span class="o">=</span> <span class="n">intercepts_output</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_hidden</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_update_shapes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights_input</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights_hidden</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights_output</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercepts_hidden</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercepts_output</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_hidden</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_nmb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of input nodes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_inputs</span>
+
+    <span class="k">def</span> <span class="nf">_set_nmb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_inputs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_shapes</span><span class="p">()</span>
+
+    <span class="n">nmb_inputs</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_nmb_inputs</span><span class="p">,</span> <span class="n">_set_nmb_inputs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_nmb_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of output nodes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_outputs</span>
+
+    <span class="k">def</span> <span class="nf">_set_nmb_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_outputs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_shapes</span><span class="p">()</span>
+
+    <span class="n">nmb_outputs</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_nmb_outputs</span><span class="p">,</span> <span class="n">_set_nmb_outputs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nmb_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of hidden layers.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_layers</span>
+
+    <span class="k">def</span> <span class="nf">_get_nmb_neurons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of neurons of the inner layers.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_set_nmb_neurons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_neurons</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_layers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_nmb_neurons</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_shapes</span><span class="p">()</span>
+
+    <span class="n">nmb_neurons</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_nmb_neurons</span><span class="p">,</span> <span class="n">_set_nmb_neurons</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_weights_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Weights between all input nodes and neurons of the first hidden</span>
+<span class="sd">        layer.</span>
+
+<span class="sd">        The input nodes and the neurons are varied on the first axis and</span>
+<span class="sd">        on the second axis of the 2-dimensional array:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.auxs.anntools import ANN</span>
+<span class="sd">        &gt;&gt;&gt; ann = ANN()</span>
+<span class="sd">        &gt;&gt;&gt; ann(nmb_inputs=2, nmb_neurons=(3,))</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_input</span>
+<span class="sd">        array([[ 0.,  0.,  0.],</span>
+<span class="sd">               [ 0.,  0.,  0.]])</span>
+
+<span class="sd">        It is allowed to set values via slicing:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.weights_input[:, 0] = 1.</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_input</span>
+<span class="sd">        array([[ 1.,  0.,  0.],</span>
+<span class="sd">               [ 1.,  0.,  0.]])</span>
+
+<span class="sd">        If possible, type conversions are performed:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.weights_input = &#39;2&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_input</span>
+<span class="sd">        array([[ 2.,  2.,  2.],</span>
+<span class="sd">               [ 2.,  2.,  2.]])</span>
+
+<span class="sd">        One can assign whole matrices directly:</span>
+
+<span class="sd">        &gt;&gt;&gt; import numpy</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_input = numpy.eye(2, 3)</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_input</span>
+<span class="sd">        array([[ 1.,  0.,  0.],</span>
+<span class="sd">               [ 0.,  1.,  0.]])</span>
+
+<span class="sd">        One can also delete the values contained in the array:</span>
+
+<span class="sd">        &gt;&gt;&gt; del ann.weights_input</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_input</span>
+<span class="sd">        array([[ 0.,  0.,  0.],</span>
+<span class="sd">               [ 0.,  0.,  0.]])</span>
+
+<span class="sd">        Errors like wrong shapes (or unconvertible inputs) result in error</span>
+<span class="sd">        messages:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.weights_input = numpy.eye(3)</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        ValueError: While trying to set the input weights of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (3,3) into shape (2,3)</span>
+
+<span class="sd">        The number of input weights is available as a property:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.nmb_weights_input</span>
+<span class="sd">        6</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">weights_input</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_weights_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_del_weights_input</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">weights_input</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape_weights_input</span><span class="p">,</span>
+                                                      <span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">objecttools</span><span class="o">.</span><span class="n">augmentexcmessage</span><span class="p">(</span>
+                    <span class="s1">&#39;While trying to set the input weights of the artificial &#39;</span>
+                    <span class="s1">&#39;neural network `</span><span class="si">%s</span><span class="s1">` of element `</span><span class="si">%s</span><span class="s1">`&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">devicename</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">_del_weights_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">weights_input</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape_weights_input</span><span class="p">)</span>
+
+    <span class="n">weights_input</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_weights_input</span><span class="p">,</span>
+                             <span class="n">_set_weights_input</span><span class="p">,</span>
+                             <span class="n">_del_weights_input</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape_weights_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Shape of the array containing the input weights&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nmb_weights_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of input weights.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_inputs</span>
+
+    <span class="k">def</span> <span class="nf">_get_weights_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Weights between all neurons of the last hidden layer and the output</span>
+<span class="sd">        nodes.</span>
+
+<span class="sd">        The neurons and the output nodes are varied on the first axis and</span>
+<span class="sd">        on the second axis of the 2-dimensional array:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.auxs.anntools import ANN</span>
+<span class="sd">        &gt;&gt;&gt; ann = ANN()</span>
+<span class="sd">        &gt;&gt;&gt; ann(nmb_outputs=2, nmb_neurons=(3,))</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_output</span>
+<span class="sd">        array([[ 0.,  0.],</span>
+<span class="sd">               [ 0.,  0.],</span>
+<span class="sd">               [ 0.,  0.]])</span>
+
+<span class="sd">        It is allowed to set values via slicing:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.weights_output[:, 0] = 1.</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_output</span>
+<span class="sd">        array([[ 1.,  0.],</span>
+<span class="sd">               [ 1.,  0.],</span>
+<span class="sd">               [ 1.,  0.]])</span>
+
+<span class="sd">        If possible, type conversions are performed:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.weights_output = &#39;2&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_output</span>
+<span class="sd">        array([[ 2.,  2.],</span>
+<span class="sd">               [ 2.,  2.],</span>
+<span class="sd">               [ 2.,  2.]])</span>
+
+<span class="sd">        One can assign whole matrices directly:</span>
+
+<span class="sd">        &gt;&gt;&gt; import numpy</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_output = numpy.eye(3, 2)</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_output</span>
+<span class="sd">        array([[ 1.,  0.],</span>
+<span class="sd">               [ 0.,  1.],</span>
+<span class="sd">               [ 0.,  0.]])</span>
+
+<span class="sd">        One can also delete the values contained in the array:</span>
+
+<span class="sd">        &gt;&gt;&gt; del ann.weights_output</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_output</span>
+<span class="sd">        array([[ 0.,  0.],</span>
+<span class="sd">               [ 0.,  0.],</span>
+<span class="sd">               [ 0.,  0.]])</span>
+
+<span class="sd">        Errors like wrong shapes (or unconvertible inputs) result in error</span>
+<span class="sd">        messages:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.weights_output = numpy.eye(3)</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        ValueError: While trying to set the output weights of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (3,3) into shape (3,2)</span>
+
+<span class="sd">        The number of output weights is available as a property:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.nmb_weights_output</span>
+<span class="sd">        6</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">weights_output</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_weights_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_del_weights_output</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">weights_output</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">shape_weights_output</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">objecttools</span><span class="o">.</span><span class="n">augmentexcmessage</span><span class="p">(</span>
+                    <span class="s1">&#39;While trying to set the output weights of the artificial &#39;</span>
+                    <span class="s1">&#39;neural network `</span><span class="si">%s</span><span class="s1">` of element `</span><span class="si">%s</span><span class="s1">`&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">devicename</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">_del_weights_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">weights_output</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape_weights_output</span><span class="p">)</span>
+
+    <span class="n">weights_output</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_weights_output</span><span class="p">,</span>
+                              <span class="n">_set_weights_output</span><span class="p">,</span>
+                              <span class="n">_del_weights_output</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape_weights_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Shape of the array containing the output weights&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_outputs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nmb_weights_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of output weights.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_outputs</span>
+
+    <span class="k">def</span> <span class="nf">_get_weights_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Weights between between the neurons of the different hidden layers.</span>
+
+<span class="sd">        The layers are varied on the first axis, the neurons of the respective</span>
+<span class="sd">        upstream layer on the second axis and the neurons of the respective</span>
+<span class="sd">        downstream layer on the third axis of a 3-dimensional array:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.auxs.anntools import ANN</span>
+<span class="sd">        &gt;&gt;&gt; ann = ANN()</span>
+<span class="sd">        &gt;&gt;&gt; ann(nmb_neurons=(3, 2, 3))</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_hidden</span>
+<span class="sd">        array([[[  0.,   0.,  nan],</span>
+<span class="sd">                [  0.,   0.,  nan],</span>
+<span class="sd">                [  0.,   0.,  nan]],</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">               [[  0.,   0.,   0.],</span>
+<span class="sd">                [  0.,   0.,   0.],</span>
+<span class="sd">                [ nan,  nan,  nan]]])</span>
+
+<span class="sd">        It is allowed to set values via slicing:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.weights_hidden[1, :, 0] = 1.</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_hidden</span>
+<span class="sd">        array([[[  0.,   0.,  nan],</span>
+<span class="sd">                [  0.,   0.,  nan],</span>
+<span class="sd">                [  0.,   0.,  nan]],</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">               [[  1.,   0.,   0.],</span>
+<span class="sd">                [  1.,   0.,   0.],</span>
+<span class="sd">                [  1.,  nan,  nan]]])</span>
+
+<span class="sd">        If possible, type conversions are performed:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.weights_hidden = &#39;2&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_hidden</span>
+<span class="sd">        array([[[ 2.,  2.,  2.],</span>
+<span class="sd">                [ 2.,  2.,  2.],</span>
+<span class="sd">                [ 2.,  2.,  2.]],</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">               [[ 2.,  2.,  2.],</span>
+<span class="sd">                [ 2.,  2.,  2.],</span>
+<span class="sd">                [ 2.,  2.,  2.]]])</span>
+
+<span class="sd">        One can assign whole matrices directly:</span>
+
+<span class="sd">        &gt;&gt;&gt; import numpy</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_hidden = numpy.eye(3)</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_hidden</span>
+<span class="sd">        array([[[ 1.,  0.,  0.],</span>
+<span class="sd">                [ 0.,  1.,  0.],</span>
+<span class="sd">                [ 0.,  0.,  1.]],</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">               [[ 1.,  0.,  0.],</span>
+<span class="sd">                [ 0.,  1.,  0.],</span>
+<span class="sd">                [ 0.,  0.,  1.]]])</span>
+
+<span class="sd">        One can also delete the values contained in the array:</span>
+
+<span class="sd">        &gt;&gt;&gt; del ann.weights_hidden</span>
+<span class="sd">        &gt;&gt;&gt; ann.weights_hidden</span>
+<span class="sd">        array([[[  0.,   0.,  nan],</span>
+<span class="sd">                [  0.,   0.,  nan],</span>
+<span class="sd">                [  0.,   0.,  nan]],</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">               [[  0.,   0.,   0.],</span>
+<span class="sd">                [  0.,   0.,   0.],</span>
+<span class="sd">                [ nan,  nan,  nan]]])</span>
+
+<span class="sd">        Errors like wrong shapes (or unconvertible inputs) result in error</span>
+<span class="sd">        messages:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.weights_hidden = numpy.eye(3, 2)</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        ValueError: While trying to set the hidden weights of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (3,2) into shape (2,3,3)</span>
+
+<span class="sd">        The number of input weights is available as a property:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.nmb_weights_hidden</span>
+<span class="sd">        12</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">weights_hidden</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_weights_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_del_weights_hidden</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">weights_hidden</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">shape_weights_hidden</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">objecttools</span><span class="o">.</span><span class="n">augmentexcmessage</span><span class="p">(</span>
+                    <span class="s1">&#39;While trying to set the hidden weights of the artificial &#39;</span>
+                    <span class="s1">&#39;neural network `</span><span class="si">%s</span><span class="s1">` of element `</span><span class="si">%s</span><span class="s1">`&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">devicename</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">_del_weights_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">weights_hidden</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape_weights_hidden</span><span class="p">,</span>
+                                               <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx_layer</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_layers</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">idx_neuron1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="n">idx_layer</span><span class="p">]):</span>
+                <span class="k">for</span> <span class="n">idx_neuron2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="n">idx_layer</span><span class="o">+</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">weights_hidden</span><span class="p">[</span><span class="n">idx_layer</span><span class="p">,</span>
+                                              <span class="n">idx_neuron1</span><span class="p">,</span>
+                                              <span class="n">idx_neuron2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+
+    <span class="n">weights_hidden</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_weights_hidden</span><span class="p">,</span>
+                              <span class="n">_set_weights_hidden</span><span class="p">,</span>
+                              <span class="n">_del_weights_hidden</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape_weights_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Shape of the array containing the activations of the hidden neurons.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_layers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_layers</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_max_nmb_neurons</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_max_nmb_neurons</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nmb_weights_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of hidden weights.&quot;&quot;&quot;</span>
+        <span class="n">nmb</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">idx_layer</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_layers</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">nmb</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="n">idx_layer</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="n">idx_layer</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">nmb</span>
+
+    <span class="k">def</span> <span class="nf">_get_intercepts_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Intercepts of all neurons of the hidden layers.</span>
+
+<span class="sd">        All intercepts are handled in a 1-dimensional array:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.auxs.anntools import ANN</span>
+<span class="sd">        &gt;&gt;&gt; ann = ANN()</span>
+<span class="sd">        &gt;&gt;&gt; ann(nmb_neurons=(3, 2))</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_hidden</span>
+<span class="sd">        array([[  0.,   0.,   0.],</span>
+<span class="sd">               [  0.,   0.,  nan]])</span>
+
+<span class="sd">        It is allowed to set values via slicing:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_hidden[0, :] = 1.</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_hidden</span>
+<span class="sd">        array([[  1.,   1.,   1.],</span>
+<span class="sd">               [  0.,   0.,  nan]])</span>
+
+<span class="sd">        If possible, type conversions are performed:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_hidden = &#39;2&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_hidden</span>
+<span class="sd">        array([[ 2.,  2.,  2.],</span>
+<span class="sd">               [ 2.,  2.,  2.]])</span>
+
+<span class="sd">        One can assign whole matrices directly:</span>
+
+<span class="sd">        &gt;&gt;&gt; import numpy</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_hidden = [1.0, 3.0, 2.0]</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_hidden</span>
+<span class="sd">        array([[ 1.,  3.,  2.],</span>
+<span class="sd">               [ 1.,  3.,  2.]])</span>
+
+<span class="sd">        One can also delete the values contained in the array:</span>
+
+<span class="sd">        &gt;&gt;&gt; del ann.intercepts_hidden</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_hidden</span>
+<span class="sd">        array([[  0.,   0.,   0.],</span>
+<span class="sd">               [  0.,   0.,  nan]])</span>
+
+<span class="sd">        Errors like wrong shapes (or unconvertible inputs) result in error</span>
+<span class="sd">        messages:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_hidden = [1.0, 3.0]</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        ValueError: While trying to set the neuron related intercepts of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (2) into shape (2,3)</span>
+
+<span class="sd">        The number of input intercepts is available as a property:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.nmb_intercepts_hidden</span>
+<span class="sd">        5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">intercepts_hidden</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_intercepts_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_del_intercepts_hidden</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">intercepts_hidden</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">shape_intercepts_hidden</span><span class="p">,</span>  <span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">objecttools</span><span class="o">.</span><span class="n">augmentexcmessage</span><span class="p">(</span>
+                    <span class="s1">&#39;While trying to set the neuron related intercepts of &#39;</span>
+                    <span class="s1">&#39;the artificial neural network `</span><span class="si">%s</span><span class="s1">` of element `</span><span class="si">%s</span><span class="s1">`&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">devicename</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">_del_intercepts_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">intercepts_hidden</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">shape_intercepts_hidden</span><span class="p">,</span>
+                                            <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx_layer</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_layers</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">idx_neuron</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="n">idx_layer</span><span class="p">]):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">intercepts_hidden</span><span class="p">[</span><span class="n">idx_layer</span><span class="p">,</span> <span class="n">idx_neuron</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+
+    <span class="n">intercepts_hidden</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_intercepts_hidden</span><span class="p">,</span>
+                                 <span class="n">_set_intercepts_hidden</span><span class="p">,</span>
+                                 <span class="n">_del_intercepts_hidden</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape_intercepts_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Shape if the array containing the intercepts of neurons of</span>
+<span class="sd">        the hidden layers.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_nmb_neurons</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nmb_intercepts_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of input intercepts.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_intercepts_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Intercepts of all output nodes.</span>
+
+<span class="sd">        All intercepts are handled in a 1-dimensional array:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.auxs.anntools import ANN</span>
+<span class="sd">        &gt;&gt;&gt; ann = ANN()</span>
+<span class="sd">        &gt;&gt;&gt; ann(nmb_outputs=3)</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_output</span>
+<span class="sd">        array([ 0.,  0.,  0.])</span>
+
+<span class="sd">        It is allowed to set values via slicing:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_output[1:] = 1.</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_output</span>
+<span class="sd">        array([ 0.,  1.,  1.])</span>
+
+<span class="sd">        If possible, type conversions are performed:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_output = &#39;2&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_output</span>
+<span class="sd">        array([ 2.,  2.,  2.])</span>
+
+<span class="sd">        One can assign whole matrices directly:</span>
+
+<span class="sd">        &gt;&gt;&gt; import numpy</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_output = [1.0, 3.0, 2.0]</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_output</span>
+<span class="sd">        array([ 1.,  3.,  2.])</span>
+
+<span class="sd">        One can also delete the values contained in the array:</span>
+
+<span class="sd">        &gt;&gt;&gt; del ann.intercepts_output</span>
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_output</span>
+<span class="sd">        array([ 0.,  0.,  0.])</span>
+
+<span class="sd">        Errors like wrong shapes (or unconvertible inputs) result in error</span>
+<span class="sd">        messages:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.intercepts_output = [1.0, 3.0]</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        ValueError: While trying to set the output node related intercepts of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (2) into shape (3)</span>
+
+<span class="sd">        The number of output intercepts is available as a property:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.nmb_intercepts_output</span>
+<span class="sd">        3</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">intercepts_output</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_intercepts_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_del_intercepts_output</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">intercepts_output</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">shape_intercepts_output</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">objecttools</span><span class="o">.</span><span class="n">augmentexcmessage</span><span class="p">(</span>
+                    <span class="s1">&#39;While trying to set the output node related intercepts &#39;</span>
+                    <span class="s1">&#39;of the artificial neural network `</span><span class="si">%s</span><span class="s1">` of element `</span><span class="si">%s</span><span class="s1">`&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">devicename</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">_del_intercepts_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">intercepts_output</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">shape_intercepts_output</span><span class="p">)</span>
+
+    <span class="n">intercepts_output</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_intercepts_output</span><span class="p">,</span>
+                                 <span class="n">_set_intercepts_output</span><span class="p">,</span>
+                                 <span class="n">_del_intercepts_output</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape_intercepts_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Shape if the array containing the intercepts of neurons of</span>
+<span class="sd">        the hidden layers.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_outputs</span><span class="p">,)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nmb_intercepts_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of output intercepts.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_outputs</span>
+
+    <span class="k">def</span> <span class="nf">_get_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Values of the input nodes.</span>
+
+<span class="sd">        All input values are handled in a 1-dimensional array:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.auxs.anntools import ANN</span>
+<span class="sd">        &gt;&gt;&gt; ann = ANN()</span>
+<span class="sd">        &gt;&gt;&gt; ann(nmb_inputs=3)</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs</span>
+<span class="sd">        array([ 0.,  0.,  0.])</span>
+
+<span class="sd">        It is allowed to set values via slicing:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.inputs[1:] = 1.</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs</span>
+<span class="sd">        array([ 0.,  1.,  1.])</span>
+
+<span class="sd">        If possible, type conversions are performed:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.inputs = &#39;2&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs</span>
+<span class="sd">        array([ 2.,  2.,  2.])</span>
+
+<span class="sd">        One can assign whole matrices directly:</span>
+
+<span class="sd">        &gt;&gt;&gt; import numpy</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs = [1.0, 3.0, 2.0]</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs</span>
+<span class="sd">        array([ 1.,  3.,  2.])</span>
+
+<span class="sd">        One can also delete the values contained in the array:</span>
+
+<span class="sd">        &gt;&gt;&gt; del ann.inputs</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs</span>
+<span class="sd">        array([ 0.,  0.,  0.])</span>
+
+<span class="sd">        Errors like wrong shapes (or unconvertible inputs) result in error</span>
+<span class="sd">        messages:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.inputs = [1.0, 3.0]</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        ValueError: While trying to set the inputs of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (2) into shape (3)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_del_inputs</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_inputs</span><span class="p">,</span>
+                                               <span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">objecttools</span><span class="o">.</span><span class="n">augmentexcmessage</span><span class="p">(</span>
+                    <span class="s1">&#39;While trying to set the inputs of the artificial &#39;</span>
+                    <span class="s1">&#39;neural network `</span><span class="si">%s</span><span class="s1">` of element `</span><span class="si">%s</span><span class="s1">`&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">devicename</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">_del_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_inputs</span><span class="p">)</span>
+
+    <span class="n">inputs</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_inputs</span><span class="p">,</span> <span class="n">_set_inputs</span><span class="p">,</span> <span class="n">_del_inputs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Values of the output nodes.</span>
+
+<span class="sd">        All output values are handled in a 1-dimensional array:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.auxs.anntools import ANN</span>
+<span class="sd">        &gt;&gt;&gt; ann = ANN()</span>
+<span class="sd">        &gt;&gt;&gt; ann(nmb_outputs=3)</span>
+<span class="sd">        &gt;&gt;&gt; ann.outputs</span>
+<span class="sd">        array([ 0.,  0.,  0.])</span>
+
+<span class="sd">        It is not allowed to change output values manually:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.outputs = 1.0</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        AttributeError: can&#39;t set attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_del_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_outputs</span><span class="p">)</span>
+
+    <span class="n">outputs</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_outputs</span><span class="p">,</span> <span class="n">fdel</span><span class="o">=</span><span class="n">_del_outputs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Values of the input nodes.</span>
+
+<span class="sd">        All input values are handled in a 1-dimensional array:</span>
+
+<span class="sd">        &gt;&gt;&gt; from hydpy.auxs.anntools import ANN</span>
+<span class="sd">        &gt;&gt;&gt; ann = ANN()</span>
+<span class="sd">        &gt;&gt;&gt; ann(nmb_inputs=3)</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs</span>
+<span class="sd">        array([ 0.,  0.,  0.])</span>
+
+<span class="sd">        It is allowed to set values via slicing:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.inputs[1:] = 1.</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs</span>
+<span class="sd">        array([ 0.,  1.,  1.])</span>
+
+<span class="sd">        If possible, type conversions are performed:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.inputs = &#39;2&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs</span>
+<span class="sd">        array([ 2.,  2.,  2.])</span>
+
+<span class="sd">        One can assign whole matrices directly:</span>
+
+<span class="sd">        &gt;&gt;&gt; import numpy</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs = [1.0, 3.0, 2.0]</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs</span>
+<span class="sd">        array([ 1.,  3.,  2.])</span>
+
+<span class="sd">        One can also delete the values contained in the array:</span>
+
+<span class="sd">        &gt;&gt;&gt; del ann.inputs</span>
+<span class="sd">        &gt;&gt;&gt; ann.inputs</span>
+<span class="sd">        array([ 0.,  0.,  0.])</span>
+
+<span class="sd">        Errors like wrong shapes (or unconvertible inputs) result in error</span>
+<span class="sd">        messages:</span>
+
+<span class="sd">        &gt;&gt;&gt; ann.inputs = [1.0, 3.0]</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        ValueError: While trying to set the inputs of the artificial neural network `ann` of element `?`, the following error occured: could not broadcast input array from shape (2) into shape (3)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_del_inputs</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_inputs</span><span class="p">,</span>
+                                               <span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">objecttools</span><span class="o">.</span><span class="n">augmentexcmessage</span><span class="p">(</span>
+                    <span class="s1">&#39;While trying to set the inputs of the artificial &#39;</span>
+                    <span class="s1">&#39;neural network `</span><span class="si">%s</span><span class="s1">` of element `</span><span class="si">%s</span><span class="s1">`&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">objecttools</span><span class="o">.</span><span class="n">devicename</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">_del_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_inputs</span><span class="p">)</span>
+
+    <span class="n">inputs</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_inputs</span><span class="p">,</span> <span class="n">_set_inputs</span><span class="p">,</span> <span class="n">_del_inputs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_update_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nmb_neurons</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">neurons</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_layers</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">nmb_neurons</span><span class="p">)))</span>
+
+<div class="viewcode-block" id="ANN.process_actual_input"><a class="viewcode-back" href="../../../anntools.html#hydpy.auxs.anntools.ANN.process_actual_input">[docs]</a>    <span class="k">def</span> <span class="nf">process_actual_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the network output values based on the input values</span>
+<span class="sd">        defined previously.</span>
+
+<span class="sd">        For more information see the documentation on class :class:`ANN`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cann</span><span class="o">.</span><span class="n">process_actual_input</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nmb_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nmb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_inputs</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">idx_layer</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_layers</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">nmb</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="n">idx_layer</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="n">idx_layer</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">nmb</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_outputs</span>
+        <span class="k">return</span> <span class="n">nmb</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nmb_intercepts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_outputs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nmb_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_weights</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_intercepts</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[(</span><span class="n">objecttools</span><span class="o">.</span><span class="n">assignrepr_value</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nmb_inputs</span><span class="p">,</span> <span class="s1">&#39;ann(nmb_inputs=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objecttools</span><span class="o">.</span><span class="n">assignrepr_tuple</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nmb_neurons</span><span class="p">,</span> <span class="s1">&#39;    nmb_neurons=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objecttools</span><span class="o">.</span><span class="n">assignrepr_value</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nmb_outputs</span><span class="p">,</span> <span class="s1">&#39;    nmb_outputs=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objecttools</span><span class="o">.</span><span class="n">assignrepr_list2</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">weights_input</span><span class="p">,</span> <span class="s1">&#39;    weights_input=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmb_layers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objecttools</span><span class="o">.</span><span class="n">assignrepr_list3</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">weights_hidden</span><span class="p">,</span> <span class="s1">&#39;    weights_hidden=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objecttools</span><span class="o">.</span><span class="n">assignrepr_list2</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">weights_output</span><span class="p">,</span> <span class="s1">&#39;    weights_output=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objecttools</span><span class="o">.</span><span class="n">assignrepr_list2</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">intercepts_hidden</span><span class="p">,</span> <span class="s1">&#39;    intercepts_hidden=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objecttools</span><span class="o">.</span><span class="n">assignrepr_list</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">intercepts_output</span><span class="p">,</span> <span class="s1">&#39;    intercepts_output=&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;)&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ANN.plot"><a class="viewcode-back" href="../../../anntools.html#hydpy.auxs.anntools.ANN.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">idx_input</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx_output</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+             <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_inputs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nmb_outputs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s1">&#39;At the moment, class `ANN` supports plotting the results &#39;</span>
+                    <span class="s1">&#39;of networks with one input and one output node only.&#39;</span><span class="p">)</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">xs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="n">idx_input</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_actual_input</span><span class="p">()</span>
+            <span class="n">ys</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="n">idx_output</span><span class="p">]</span>
+        <span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<span class="n">autodoctools</span><span class="o">.</span><span class="n">autodoc_module</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

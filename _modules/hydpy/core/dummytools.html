@@ -1,0 +1,200 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>hydpy.core.dummytools &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for hydpy.core.dummytools</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This module is thought for easing doctests only.&quot;&quot;&quot;</span>
+
+<span class="c1"># import...</span>
+<span class="c1"># ...from standard library</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="c1"># ...from HydPy</span>
+<span class="kn">from</span> <span class="nn">hydpy.core</span> <span class="k">import</span> <span class="n">autodoctools</span>
+
+
+<div class="viewcode-block" id="Dummies"><a class="viewcode-back" href="../../../dummytools.html#hydpy.core.dummytools.Dummies">[docs]</a><span class="k">class</span> <span class="nc">Dummies</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Handles &quot;global&quot; doctest data.</span>
+
+<span class="sd">    A typical use pattern is to generated the instance of a class in the</span>
+<span class="sd">    main docstring of the class and to test the different class methods</span>
+<span class="sd">    based on this instance in seperate docstrings afterwards.</span>
+
+<span class="sd">    Class :class:`Dummies` tries to ensure that the original objects are</span>
+<span class="sd">    not altered due to performing different tests.  This protection</span>
+<span class="sd">    mechanism is successfull for the simple following test class:</span>
+
+<span class="sd">    &gt;&gt;&gt; class Test(object):</span>
+<span class="sd">    ...</span>
+<span class="sd">    ...     def __init__(self):</span>
+<span class="sd">    ...         self.name = &#39;some_name&#39;</span>
+<span class="sd">    ...         self.values = [1, 2, 3]</span>
+
+<span class="sd">    As shown by the following results, neither the name nor the values of</span>
+<span class="sd">    `dummies.test` can be altered by changing the respective</span>
+<span class="sd">    attributes of the local object `test`:</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy import dummies</span>
+<span class="sd">    &gt;&gt;&gt; dummies.test = Test()</span>
+<span class="sd">    &gt;&gt;&gt; test = dummies.test</span>
+<span class="sd">    &gt;&gt;&gt; test.name = &#39;different_name&#39;</span>
+<span class="sd">    &gt;&gt;&gt; dummies.test.name</span>
+<span class="sd">    &#39;some_name&#39;</span>
+<span class="sd">    &gt;&gt;&gt; test.values[1] = 4</span>
+<span class="sd">    &gt;&gt;&gt; dummies.test.values</span>
+<span class="sd">    [1, 2, 3]</span>
+
+<span class="sd">    The show pretection mechanism is implemented via making &quot;deep copies&quot; of</span>
+<span class="sd">    objects handled by :class:`Dummies` objects.  So lets see what happens</span>
+<span class="sd">    when we subclass the test class and disable deep copying:</span>
+
+<span class="sd">    &gt;&gt;&gt; class Test(Test):</span>
+<span class="sd">    ...</span>
+<span class="sd">    ...     def __deepcopy__(self, dict_):</span>
+<span class="sd">    ...         raise NotImplementedError()</span>
+
+<span class="sd">    Repeating the the above examples still shows that attribute `name` is</span>
+<span class="sd">    still protected but attribute `values` is not, meaning `test` is only</span>
+<span class="sd">    a flat copy of `dummies.test`:</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy import dummies</span>
+<span class="sd">    &gt;&gt;&gt; dummies.test = Test()</span>
+<span class="sd">    &gt;&gt;&gt; test = dummies.test</span>
+<span class="sd">    &gt;&gt;&gt; test.name = &#39;different_name&#39;</span>
+<span class="sd">    &gt;&gt;&gt; dummies.test.name</span>
+<span class="sd">    &#39;some_name&#39;</span>
+<span class="sd">    &gt;&gt;&gt; test.values[1] = 4</span>
+<span class="sd">    &gt;&gt;&gt; dummies.test.values</span>
+<span class="sd">    [1, 4, 3]</span>
+
+<span class="sd">    When we also disable flat copying, neither the name nor the values</span>
+<span class="sd">    of `dummies.test` are protected:</span>
+
+<span class="sd">    &gt;&gt;&gt; class Test(Test):</span>
+<span class="sd">    ...</span>
+<span class="sd">    ...     def __copy__(self):</span>
+<span class="sd">    ...         raise NotImplementedError()</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy import dummies</span>
+<span class="sd">    &gt;&gt;&gt; dummies.test = Test()</span>
+<span class="sd">    &gt;&gt;&gt; test = dummies.test</span>
+<span class="sd">    &gt;&gt;&gt; test.name = &#39;different_name&#39;</span>
+<span class="sd">    &gt;&gt;&gt; dummies.test.name</span>
+<span class="sd">    &#39;different_name&#39;</span>
+<span class="sd">    &gt;&gt;&gt; test.values[1] = 4</span>
+<span class="sd">    &gt;&gt;&gt; dummies.test.values</span>
+<span class="sd">    [1, 4, 3]</span>
+
+<span class="sd">    After each test of a complete module, the dummy object is empty again</span>
+<span class="sd">    (except for variable names starting with two underscores).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Dummies.clear"><a class="viewcode-back" href="../../../dummytools.html#hydpy.core.dummytools.Dummies.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Dummies</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Dummies</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Dummies object does not handle an object &#39;</span>
+                                 <span class="s1">&#39;named `</span><span class="si">%s</span><span class="s1">` at the moment.&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+
+<span class="n">autodoctools</span><span class="o">.</span><span class="n">autodoc_module</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

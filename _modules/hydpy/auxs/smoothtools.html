@@ -1,0 +1,295 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>hydpy.auxs.smoothtools &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for hydpy.auxs.smoothtools</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This module implements features which help to regularize discontinuous</span>
+<span class="sd">process equations.</span>
+
+<span class="sd">.. _Tyralla (2016): http://www.hydrology.ruhr-uni-bochum.de/hydrolgy/mam/download/schriftenreihe_29.pdf</span>
+
+<span class="sd">Many hydrological models rely heavily on discontinous equations describing</span>
+<span class="sd">hydrological processes.  The related &quot;if-else&quot; blocks are often not</span>
+<span class="sd">theoretically motivated.  Instead, they are thought to ease implementing</span>
+<span class="sd">ad hoc solutions of different (parts of) process equations without taking</span>
+<span class="sd">care of the total set of process equations.</span>
+
+<span class="sd">There are some reasons to ground new model concepts on mainly continuous</span>
+<span class="sd">process descriptions. See e.g. `Tyralla (2016)`_ for more a more exhaustive</span>
+<span class="sd">discussion of this topic.  Nevertheless, one might often want -- least as</span>
+<span class="sd">a starting point -- to pick single discontinuous but well-established</span>
+<span class="sd">equations of old model concepts for a new model concept.  The tools</span>
+<span class="sd">provided by this module can be used to regularize the discontinuities of</span>
+<span class="sd">such equations.  More concrete, the tools are thought for replacing</span>
+<span class="sd">discontinous process equations by continuous approximations.</span>
+
+<span class="sd">Some of the implemented features are to be applied during model simulations</span>
+<span class="sd">and are in some other way performance-critical.  These features are defined</span>
+<span class="sd">in the Cython extension module :mod:`~hydpy.cythons.smoothutils`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># import...</span>
+<span class="c1"># ...from standard library</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="c1"># ...from site-packages</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">optimize</span>
+<span class="c1"># ...from HydPy</span>
+<span class="kn">from</span> <span class="nn">hydpy.cythons</span> <span class="k">import</span> <span class="n">smoothutils</span>
+<span class="kn">from</span> <span class="nn">hydpy.core</span> <span class="k">import</span> <span class="n">autodoctools</span>
+
+
+<div class="viewcode-block" id="calc_smoothpar_logistic1"><a class="viewcode-back" href="../../../smoothtools.html#hydpy.auxs.smoothtools.calc_smoothpar_logistic1">[docs]</a><span class="k">def</span> <span class="nf">calc_smoothpar_logistic1</span><span class="p">(</span><span class="n">metapar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the smoothing parameter corresponding to the given meta</span>
+<span class="sd">    parameter when using :func:`~hydpy.cythons.smoothutils.smooth_logistic1`.</span>
+
+<span class="sd">    Calculate the smoothing parameter value corresponding the meta parameter</span>
+<span class="sd">    value 2.5:</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy.auxs.smoothtools import calc_smoothpar_logistic1</span>
+<span class="sd">    &gt;&gt;&gt; smoothpar = calc_smoothpar_logistic1(2.5)</span>
+
+<span class="sd">    Using this smoothing parameter value, the output of function</span>
+<span class="sd">    :func:`~hydpy.cythons.smoothutils.smooth_logistic1` differs by</span>
+<span class="sd">    1 % from the related `true` discontinuous step function for the</span>
+<span class="sd">    input values -2.5 and 2.5 (which are located at a distance of 2.5</span>
+<span class="sd">    from the position of the discontinuity):</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy.cythons import smoothutils</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">    &gt;&gt;&gt; round_(smoothutils.smooth_logistic1(-2.5, smoothpar))</span>
+<span class="sd">    0.01</span>
+<span class="sd">    &gt;&gt;&gt; round_(smoothutils.smooth_logistic1(2.5, smoothpar))</span>
+<span class="sd">    0.99</span>
+
+<span class="sd">    For zero or negative meta parameter values, a zero smoothing parameter</span>
+<span class="sd">    value is returned:</span>
+
+<span class="sd">    &gt;&gt;&gt; round_(calc_smoothpar_logistic1(0.0))</span>
+<span class="sd">    0.0</span>
+<span class="sd">    &gt;&gt;&gt; round_(calc_smoothpar_logistic1(-1.0))</span>
+<span class="sd">    0.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">metapar</span><span class="o">/</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">99.</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_error_smoothpar_logistic2</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">metapar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">smoothutils</span><span class="o">.</span><span class="n">smooth_logistic2</span><span class="p">(</span><span class="o">-</span><span class="n">metapar</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span> <span class="o">-</span> <span class="o">.</span><span class="mi">01</span>
+
+
+<span class="k">def</span> <span class="nf">_smooth_logistic2_derivative</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">metapar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">smoothutils</span><span class="o">.</span><span class="n">smooth_logistic2_derivative</span><span class="p">(</span><span class="n">metapar</span><span class="p">,</span> <span class="n">par</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="calc_smoothpar_logistic2"><a class="viewcode-back" href="../../../smoothtools.html#hydpy.auxs.smoothtools.calc_smoothpar_logistic2">[docs]</a><span class="k">def</span> <span class="nf">calc_smoothpar_logistic2</span><span class="p">(</span><span class="n">metapar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the smoothing parameter corresponding to the given meta</span>
+<span class="sd">    parameter when using :func:`~hydpy.cythons.smoothutils.smooth_logistic2`.</span>
+
+<span class="sd">    Calculate the smoothing parameter value corresponding the meta parameter</span>
+<span class="sd">    value 2.5:</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy.auxs.smoothtools import calc_smoothpar_logistic2</span>
+<span class="sd">    &gt;&gt;&gt; smoothpar = calc_smoothpar_logistic2(2.5)</span>
+
+<span class="sd">    Using this smoothing parameter value, the output of function</span>
+<span class="sd">    :func:`~hydpy.cythons.smoothutils.smooth_logistic2` differs by</span>
+<span class="sd">    1 % from the related `true` discontinuous step function for the</span>
+<span class="sd">    input values -2.5 and 2.5 (which are located at a distance of 2.5</span>
+<span class="sd">    from the position of the discontinuity):</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy.cythons import smoothutils</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">    &gt;&gt;&gt; round_(smoothutils.smooth_logistic2(-2.5, smoothpar))</span>
+<span class="sd">    0.01</span>
+<span class="sd">    &gt;&gt;&gt; round_(smoothutils.smooth_logistic2(2.5, smoothpar))</span>
+<span class="sd">    2.51</span>
+
+<span class="sd">    For zero or negative meta parameter values, a zero smoothing parameter</span>
+<span class="sd">    value is returned:</span>
+
+<span class="sd">    &gt;&gt;&gt; round_(calc_smoothpar_logistic2(0.0))</span>
+<span class="sd">    0.0</span>
+<span class="sd">    &gt;&gt;&gt; round_(calc_smoothpar_logistic2(-1.0))</span>
+<span class="sd">    0.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">metapar</span> <span class="o">&lt;=</span> <span class="mf">0.</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">optimize</span><span class="o">.</span><span class="n">newton</span><span class="p">(</span><span class="n">_error_smoothpar_logistic2</span><span class="p">,</span>
+                               <span class="o">.</span><span class="mi">3</span> <span class="o">*</span> <span class="n">metapar</span><span class="o">**.</span><span class="mi">84</span><span class="p">,</span>
+                               <span class="n">_smooth_logistic2_derivative</span><span class="p">,</span>
+                               <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">metapar</span><span class="p">,))</span></div>
+
+
+<span class="n">calc_smoothpar_logistic3</span> <span class="o">=</span> <span class="n">calc_smoothpar_logistic2</span>
+<span class="sd">&quot;&quot;&quot;Return the smoothing parameter corresponding to the given meta</span>
+<span class="sd">parameter when using :func:`~hydpy.cythons.smoothutils.smooth_logistic3`.</span>
+
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_logistic3` is only an alias for</span>
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_logistic2`.</span>
+
+<span class="sd">Calculate the smoothing parameter value corresponding the meta parameter</span>
+<span class="sd">value 2.5:</span>
+
+<span class="sd">&gt;&gt;&gt; from hydpy.auxs.smoothtools import calc_smoothpar_logistic3</span>
+<span class="sd">&gt;&gt;&gt; smoothpar = calc_smoothpar_logistic3(2.5)</span>
+
+<span class="sd">Using this smoothing parameter value, the output of function</span>
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_logistic3` would ideally</span>
+<span class="sd">differs by 1 % from the related `true` discontinuous step function</span>
+<span class="sd">for the input values -2.5 and 3.5 (which are located at a distance</span>
+<span class="sd">of 2.5 from the position of the nearest discontinuity):</span>
+
+<span class="sd">&gt;&gt;&gt; from hydpy.cythons import smoothutils</span>
+<span class="sd">&gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">&gt;&gt;&gt; round_(smoothutils.smooth_logistic3(-2., smoothpar))</span>
+<span class="sd">0.009876</span>
+<span class="sd">&gt;&gt;&gt; round_(smoothutils.smooth_logistic3(3., smoothpar))</span>
+<span class="sd">0.990124</span>
+
+<span class="sd">In contrast to the examples shown for functions</span>
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_logistic1` and</span>
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_logistic2`, the smoothing</span>
+<span class="sd">parameter determined for function</span>
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_logistic3` is not in perfect</span>
+<span class="sd">agreement with the given meta parameter.  For most purpuses, the</span>
+<span class="sd">resulting error is negligible.  If one needs a higher accuracy, some</span>
+<span class="sd">iterative refinement should be implemented.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">calc_smoothpar_max1</span> <span class="o">=</span> <span class="n">calc_smoothpar_logistic2</span>
+<span class="sd">&quot;&quot;&quot;Return the smoothing parameter corresponding to the given meta</span>
+<span class="sd">parameter when using :func:`~hydpy.cythons.smoothutils.smooth_max1`.</span>
+
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_min1` is only an alias for</span>
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_logistic2`.</span>
+
+<span class="sd">Calculate the smoothing parameter value corresponding the meta parameter</span>
+<span class="sd">value 2.5:</span>
+
+<span class="sd">&gt;&gt;&gt; from hydpy.auxs.smoothtools import calc_smoothpar_max1</span>
+<span class="sd">&gt;&gt;&gt; smoothpar = calc_smoothpar_max1(2.5)</span>
+
+<span class="sd">Using this smoothing parameter value, the output of function</span>
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_max1` is 0.01 above the usual</span>
+<span class="sd">discontinuous maximum function result, if the absolute value of the</span>
+<span class="sd">difference between the x and the y value is 2.5:</span>
+
+<span class="sd">&gt;&gt;&gt; from hydpy.cythons import smoothutils</span>
+<span class="sd">&gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">&gt;&gt;&gt; round_(smoothutils.smooth_max1(4.0, 1.5, smoothpar))</span>
+<span class="sd">4.01</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">calc_smoothpar_min1</span> <span class="o">=</span> <span class="n">calc_smoothpar_logistic2</span>
+<span class="sd">&quot;&quot;&quot;Return the smoothing parameter corresponding to the given meta</span>
+<span class="sd">parameter when using :func:`~hydpy.cythons.smoothutils.smooth_min1`.</span>
+
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_min1` is only an alias for</span>
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_logistic2`.</span>
+
+<span class="sd">Calculate the smoothing parameter value corresponding the meta parameter</span>
+<span class="sd">value 2.5:</span>
+
+<span class="sd">&gt;&gt;&gt; from hydpy.auxs.smoothtools import calc_smoothpar_min1</span>
+<span class="sd">&gt;&gt;&gt; smoothpar = calc_smoothpar_min1(2.5)</span>
+
+<span class="sd">Using this smoothing parameter value, the output of function</span>
+<span class="sd">:func:`~hydpy.cythons.smoothutils.smooth_min1` is 0.01 below the usual</span>
+<span class="sd">discontinuous minimum function result, if the absolute value of the</span>
+<span class="sd">difference between the x and the y value is 2.5:</span>
+
+<span class="sd">&gt;&gt;&gt; from hydpy.cythons import smoothutils</span>
+<span class="sd">&gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">&gt;&gt;&gt; round_(smoothutils.smooth_min1(-4.0, -1.5, smoothpar))</span>
+<span class="sd">-4.01</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">autodoctools</span><span class="o">.</span><span class="n">autodoc_module</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

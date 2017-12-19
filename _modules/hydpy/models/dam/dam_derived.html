@@ -1,0 +1,253 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>hydpy.models.dam.dam_derived &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for hydpy.models.dam.dam_derived</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># import...</span>
+<span class="c1"># ...from standard library</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="c1"># ...HydPy specific</span>
+<span class="kn">from</span> <span class="nn">hydpy</span> <span class="k">import</span> <span class="n">pub</span>
+<span class="kn">from</span> <span class="nn">hydpy.core</span> <span class="k">import</span> <span class="n">parametertools</span>
+<span class="kn">from</span> <span class="nn">hydpy.auxs</span> <span class="k">import</span> <span class="n">smoothtools</span>
+
+
+<div class="viewcode-block" id="TOY"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.TOY">[docs]</a><span class="k">class</span> <span class="nc">TOY</span><span class="p">(</span><span class="n">parametertools</span><span class="o">.</span><span class="n">IndexParameter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;References the &quot;global&quot; time of the year index array [-].&quot;&quot;&quot;</span>
+    <span class="n">NDIM</span><span class="p">,</span> <span class="n">TYPE</span><span class="p">,</span> <span class="n">TIME</span><span class="p">,</span> <span class="n">SPAN</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TOY.update"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.TOY.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setreference</span><span class="p">(</span><span class="n">pub</span><span class="o">.</span><span class="n">indexer</span><span class="o">.</span><span class="n">timeofyear</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Seconds"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.Seconds">[docs]</a><span class="k">class</span> <span class="nc">Seconds</span><span class="p">(</span><span class="n">parametertools</span><span class="o">.</span><span class="n">SingleParameter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Length of the actual simulation step size in seconds [s].&quot;&quot;&quot;</span>
+    <span class="n">NDIM</span><span class="p">,</span> <span class="n">TYPE</span><span class="p">,</span> <span class="n">TIME</span><span class="p">,</span> <span class="n">SPAN</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Seconds.update"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.Seconds.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulationstep</span><span class="o">.</span><span class="n">seconds</span></div></div>
+
+
+<div class="viewcode-block" id="RemoteDischargeSmoothPar"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.RemoteDischargeSmoothPar">[docs]</a><span class="k">class</span> <span class="nc">RemoteDischargeSmoothPar</span><span class="p">(</span><span class="n">parametertools</span><span class="o">.</span><span class="n">MultiParameter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Smoothing parameter to be derived from</span>
+<span class="sd">    :class:`~hydpy.models.dam.dam_control.RemoteDischargeSavety` [m3/s].</span>
+
+<span class="sd">    The following example is explained in some detail in module</span>
+<span class="sd">    :mod:`~hydpy.auxs.smoothtools`:</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy import pub</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.core.timetools import Timegrids, Timegrid</span>
+<span class="sd">    &gt;&gt;&gt; pub.timegrids = Timegrids(Timegrid(&#39;2000.01.01&#39;,</span>
+<span class="sd">    ...                                    &#39;2000.01.03&#39;,</span>
+<span class="sd">    ...                                    &#39;1d&#39;))</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">    &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">    &gt;&gt;&gt; remotedischargesavety(0.0)</span>
+<span class="sd">    &gt;&gt;&gt; remotedischargesavety.values[1] = 2.5</span>
+<span class="sd">    &gt;&gt;&gt; derived.remotedischargesmoothpar.update()</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.cythons.smoothutils import smooth_logistic1</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">    &gt;&gt;&gt; round_(smooth_logistic1(0.1, derived.remotedischargesmoothpar[0]))</span>
+<span class="sd">    1.0</span>
+<span class="sd">    &gt;&gt;&gt; round_(smooth_logistic1(2.5, derived.remotedischargesmoothpar[1]))</span>
+<span class="sd">    0.99</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NDIM</span><span class="p">,</span> <span class="n">TYPE</span><span class="p">,</span> <span class="n">TIME</span><span class="p">,</span> <span class="n">SPAN</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RemoteDischargeSmoothPar.update"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.RemoteDischargeSmoothPar.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">metapars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpars</span><span class="o">.</span><span class="n">pars</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">remotedischargesavety</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">metapars</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">metapar</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metapars</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">smoothtools</span><span class="o">.</span><span class="n">calc_smoothpar_logistic1</span><span class="p">(</span><span class="n">metapar</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="NearDischargeMinimumSmoothPar1"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.NearDischargeMinimumSmoothPar1">[docs]</a><span class="k">class</span> <span class="nc">NearDischargeMinimumSmoothPar1</span><span class="p">(</span><span class="n">parametertools</span><span class="o">.</span><span class="n">MultiParameter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Smoothing parameter to be derived from</span>
+<span class="sd">    :class:`~hydpy.models.dam.dam_control.NearDischargeMinimumThreshold`</span>
+<span class="sd">    for smoothing kernel :func:`~hydpy.cythons.smoothutils.smooth_logistic1`</span>
+<span class="sd">    [m3/s].</span>
+
+<span class="sd">    The following example is explained in some detail in module</span>
+<span class="sd">    :mod:`~hydpy.auxs.smoothtools`:</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy import pub</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.core.timetools import Timegrids, Timegrid</span>
+<span class="sd">    &gt;&gt;&gt; pub.timegrids = Timegrids(Timegrid(&#39;2000.01.01&#39;,</span>
+<span class="sd">    ...                                    &#39;2000.01.03&#39;,</span>
+<span class="sd">    ...                                    &#39;1d&#39;))</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">    &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">    &gt;&gt;&gt; neardischargeminimumtolerance(0.0)</span>
+<span class="sd">    &gt;&gt;&gt; neardischargeminimumtolerance.values[1] = 2.5</span>
+<span class="sd">    &gt;&gt;&gt; derived.neardischargeminimumsmoothpar1.update()</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.cythons.smoothutils import smooth_logistic1</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">    &gt;&gt;&gt; round_(smooth_logistic1(1.0, derived.neardischargeminimumsmoothpar1[0]))</span>
+<span class="sd">    1.0</span>
+<span class="sd">    &gt;&gt;&gt; round_(smooth_logistic1(2.5, derived.neardischargeminimumsmoothpar1[1]))</span>
+<span class="sd">    0.99</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NDIM</span><span class="p">,</span> <span class="n">TYPE</span><span class="p">,</span> <span class="n">TIME</span><span class="p">,</span> <span class="n">SPAN</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NearDischargeMinimumSmoothPar1.update"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.NearDischargeMinimumSmoothPar1.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">metapars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpars</span><span class="o">.</span><span class="n">pars</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">neardischargeminimumtolerance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">metapars</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">metapar</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metapars</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">smoothtools</span><span class="o">.</span><span class="n">calc_smoothpar_logistic1</span><span class="p">(</span><span class="n">metapar</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="NearDischargeMinimumSmoothPar2"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.NearDischargeMinimumSmoothPar2">[docs]</a><span class="k">class</span> <span class="nc">NearDischargeMinimumSmoothPar2</span><span class="p">(</span><span class="n">parametertools</span><span class="o">.</span><span class="n">MultiParameter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Smoothing parameter to be derived from</span>
+<span class="sd">    :class:`~hydpy.models.dam.dam_control.NearDischargeMinimumThreshold`</span>
+<span class="sd">    for smoothing kernel :func:`~hydpy.cythons.smoothutils.smooth_logistic2`</span>
+<span class="sd">    [m3/s].</span>
+
+<span class="sd">    The following example is explained in some detail in module</span>
+<span class="sd">    :mod:`~hydpy.auxs.smoothtools`:</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy import pub</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.core.timetools import Timegrids, Timegrid</span>
+<span class="sd">    &gt;&gt;&gt; pub.timegrids = Timegrids(Timegrid(&#39;2000.01.01&#39;,</span>
+<span class="sd">    ...                                    &#39;2000.01.03&#39;,</span>
+<span class="sd">    ...                                    &#39;1d&#39;))</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">    &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">    &gt;&gt;&gt; neardischargeminimumtolerance(0.0)</span>
+<span class="sd">    &gt;&gt;&gt; neardischargeminimumtolerance.values[1] = 2.5</span>
+<span class="sd">    &gt;&gt;&gt; derived.neardischargeminimumsmoothpar2.update()</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.cythons.smoothutils import smooth_logistic2</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">    &gt;&gt;&gt; round_(smooth_logistic2(0.0, derived.neardischargeminimumsmoothpar2[0]))</span>
+<span class="sd">    0.0</span>
+<span class="sd">    &gt;&gt;&gt; round_(smooth_logistic2(2.5, derived.neardischargeminimumsmoothpar2[1]))</span>
+<span class="sd">    2.51</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NDIM</span><span class="p">,</span> <span class="n">TYPE</span><span class="p">,</span> <span class="n">TIME</span><span class="p">,</span> <span class="n">SPAN</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NearDischargeMinimumSmoothPar2.update"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.NearDischargeMinimumSmoothPar2.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">metapars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpars</span><span class="o">.</span><span class="n">pars</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">neardischargeminimumtolerance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">metapars</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">metapar</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metapars</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">smoothtools</span><span class="o">.</span><span class="n">calc_smoothpar_logistic2</span><span class="p">(</span><span class="n">metapar</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="WaterLevelMinimumSmoothPar"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.WaterLevelMinimumSmoothPar">[docs]</a><span class="k">class</span> <span class="nc">WaterLevelMinimumSmoothPar</span><span class="p">(</span><span class="n">parametertools</span><span class="o">.</span><span class="n">SingleParameter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Smoothing parameter to be derived from</span>
+<span class="sd">    :class:`~hydpy.models.dam.dam_control.WaterLevelMinimumTolerance` [m].</span>
+
+<span class="sd">    The following example is explained in some detail in module</span>
+<span class="sd">    :mod:`~hydpy.auxs.smoothtools`:</span>
+
+<span class="sd">    &gt;&gt;&gt; from hydpy.models.dam import *</span>
+<span class="sd">    &gt;&gt;&gt; parameterstep()</span>
+<span class="sd">    &gt;&gt;&gt; waterlevelminimumtolerance(0.0)</span>
+<span class="sd">    &gt;&gt;&gt; derived.waterlevelminimumsmoothpar.update()</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.cythons.smoothutils import smooth_logistic1</span>
+<span class="sd">    &gt;&gt;&gt; from hydpy.core.objecttools import round_</span>
+<span class="sd">    &gt;&gt;&gt; round_(smooth_logistic1(0.1, derived.waterlevelminimumsmoothpar))</span>
+<span class="sd">    1.0</span>
+<span class="sd">    &gt;&gt;&gt; waterlevelminimumtolerance(2.5)</span>
+<span class="sd">    &gt;&gt;&gt; derived.waterlevelminimumsmoothpar.update()</span>
+<span class="sd">    &gt;&gt;&gt; round_(smooth_logistic1(2.5, derived.waterlevelminimumsmoothpar))</span>
+<span class="sd">    0.99</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NDIM</span><span class="p">,</span> <span class="n">TYPE</span><span class="p">,</span> <span class="n">TIME</span><span class="p">,</span> <span class="n">SPAN</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WaterLevelMinimumSmoothPar.update"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.WaterLevelMinimumSmoothPar.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">metapar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpars</span><span class="o">.</span><span class="n">pars</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">waterlevelminimumtolerance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">smoothtools</span><span class="o">.</span><span class="n">calc_smoothpar_logistic1</span><span class="p">(</span><span class="n">metapar</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DerivedParameters"><a class="viewcode-back" href="../../../../dam.html#hydpy.models.dam.dam_derived.DerivedParameters">[docs]</a><span class="k">class</span> <span class="nc">DerivedParameters</span><span class="p">(</span><span class="n">parametertools</span><span class="o">.</span><span class="n">SubParameters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Derived parameters of the dam model.&quot;&quot;&quot;</span>
+    <span class="n">_PARCLASSES</span> <span class="o">=</span> <span class="p">(</span><span class="n">TOY</span><span class="p">,</span>
+                   <span class="n">Seconds</span><span class="p">,</span>
+                   <span class="n">RemoteDischargeSmoothPar</span><span class="p">,</span>
+                   <span class="n">NearDischargeMinimumSmoothPar1</span><span class="p">,</span>
+                   <span class="n">NearDischargeMinimumSmoothPar2</span><span class="p">,</span>
+                   <span class="n">WaterLevelMinimumSmoothPar</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

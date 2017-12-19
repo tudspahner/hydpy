@@ -1,0 +1,190 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>annutils &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="configutils" href="configutils.html" />
+    <link rel="prev" title="smoothutils" href="smoothutils.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="configutils.html" title="configutils"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="smoothutils.html" title="smoothutils"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="cythons.html" accesskey="U">Cythons Modules</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="annutils">
+<span id="id1"></span><h1>annutils<a class="headerlink" href="#annutils" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-hydpy.cythons.autogen.annutils"></span><p>This Cython module implements the performance-critical methods of the
+Python module <a class="reference internal" href="anntools.html#module-hydpy.auxs.anntools" title="hydpy.auxs.anntools"><code class="xref py py-mod docutils literal"><span class="pre">anntools</span></code></a>.</p>
+<dl class="class">
+<dt id="hydpy.cythons.autogen.annutils.ANN">
+<em class="property">class </em><code class="descclassname">hydpy.cythons.autogen.annutils.</code><code class="descname">ANN</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.inputs">
+<code class="descname">inputs</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.inputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.intercepts_hidden">
+<code class="descname">intercepts_hidden</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.intercepts_hidden" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.intercepts_output">
+<code class="descname">intercepts_output</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.intercepts_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.neurons">
+<code class="descname">neurons</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.neurons" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.nmb_inputs">
+<code class="descname">nmb_inputs</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.nmb_inputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.nmb_layers">
+<code class="descname">nmb_layers</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.nmb_layers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.nmb_neurons">
+<code class="descname">nmb_neurons</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.nmb_neurons" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.nmb_outputs">
+<code class="descname">nmb_outputs</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.nmb_outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.outputs">
+<code class="descname">outputs</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hydpy.cythons.autogen.annutils.ANN.process_actual_input">
+<code class="descname">process_actual_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.process_actual_input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.weights_hidden">
+<code class="descname">weights_hidden</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.weights_hidden" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.weights_input">
+<code class="descname">weights_input</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.weights_input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.annutils.ANN.weights_output">
+<code class="descname">weights_output</code><a class="headerlink" href="#hydpy.cythons.autogen.annutils.ANN.weights_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="smoothutils.html"
+                        title="previous chapter">smoothutils</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="configutils.html"
+                        title="next chapter">configutils</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/annutils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="configutils.html" title="configutils"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="smoothutils.html" title="smoothutils"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="cythons.html" >Cythons Modules</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,198 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>configutils &#8212; HydPy 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Model Collection" href="modelcollection.html" />
+    <link rel="prev" title="annutils" href="annutils.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="modelcollection.html" title="Model Collection"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="annutils.html" title="annutils"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="cythons.html" accesskey="U">Cythons Modules</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="configutils">
+<span id="id1"></span><h1>configutils<a class="headerlink" href="#configutils" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-hydpy.cythons.autogen.configutils"></span><p>This Cython module implements global configuration data for numerical
+tool, which must be available at Cython speed during simulations.</p>
+<dl class="class">
+<dt id="hydpy.cythons.autogen.configutils.Config">
+<em class="property">class </em><code class="descclassname">hydpy.cythons.autogen.configutils.</code><code class="descname">Config</code><a class="headerlink" href="#hydpy.cythons.autogen.configutils.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.configutils.Config.abs_error_max">
+<code class="descname">abs_error_max</code><a class="headerlink" href="#hydpy.cythons.autogen.configutils.Config.abs_error_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Numerical error tolerance.</p>
+<p>Many numerical integration algorithms provide error estimates.  An
+integration result is only accepted, if the associated error estimate
+is lower than a given threshold value…</p>
+<p>The default value is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.cythons.configtools</span> <span class="k">import</span> <span class="n">Config</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">abs_error_max</span><span class="p">)</span>
+<span class="go">0.01</span>
+</pre></div>
+</div>
+<p>You can pass larger value, but note that too large tolerances as the
+following would possible lead to poor simulation results:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span><span class="o">.</span><span class="n">abs_error_max</span> <span class="o">=</span> <span class="mf">1e3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">abs_error_max</span><span class="p">)</span>
+<span class="go">1000.0</span>
+</pre></div>
+</div>
+<p>Tolerances lower than zero or equal zero cannot be met and are thus
+forbidden:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span><span class="o">.</span><span class="n">abs_error_max</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">The numerical tolerance value `abs_error_max` must be larger than zero, but the value `0.0` was given.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hydpy.cythons.autogen.configutils.Config.rel_dt_min">
+<code class="descname">rel_dt_min</code><a class="headerlink" href="#hydpy.cythons.autogen.configutils.Config.rel_dt_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>Smallest numerical step size.</p>
+<p>Under some circumstances, numerical integration algorithms might not
+be able to achieve sufficient accuracy with reasonable effort.  To
+prevent model simulations from becoming too long, one can restrict
+the smallest time step, with which an outer time step is allowed to
+be solved…</p>
+<p>The default value is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.cythons.configtools</span> <span class="k">import</span> <span class="n">Config</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydpy.core.objecttools</span> <span class="k">import</span> <span class="n">round_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">rel_dt_min</span><span class="p">)</span>
+<span class="go">0.001</span>
+</pre></div>
+</div>
+<p>You can pass larger value, but note that too large step sizes as the
+following would possible result in poor simulation results:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span><span class="o">.</span><span class="n">rel_dt_min</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">rel_dt_min</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+<p>On the other hand, too small step sizes might result in too long
+simulation times:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span><span class="o">.</span><span class="n">rel_dt_min</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">round_</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">rel_dt_min</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p>Tolerances lower than zero or larger than one do not make sense and
+are thus forbidden:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span><span class="o">.</span><span class="n">rel_dt_min</span> <span class="o">=</span> <span class="mf">1.1</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">The smallest integration time step `_rel_dt_min` must not be smaller than zero or larger than one, but the value `1.1` was given.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="annutils.html"
+                        title="previous chapter">annutils</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="modelcollection.html"
+                        title="next chapter">Model Collection</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/configutils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="modelcollection.html" title="Model Collection"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="annutils.html" title="annutils"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">HydPy 2.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="cythons.html" >Cythons Modules</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Christoph Tyralla.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+    </div>
+  </body>
+</html>
